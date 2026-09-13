@@ -3,7 +3,7 @@ import streamlit as st
 from src.tracker import REFRESH_SECONDS, SYMBOLS, get_prices
 
 
-st.set_page_config(page_title="Stock Tracker", page_icon="📈", layout="wide")
+st.set_page_config(page_title="Stock Tracker App", page_icon="📈", layout="wide")
 
 
 @st.cache_data(ttl=REFRESH_SECONDS - 1, show_spinner=False)
@@ -12,7 +12,7 @@ def load_prices(symbols):
 
 
 def render_dashboard():
-    st.title("📈 Stock Tracker")
+    st.title("📈 Stock Tracker App")
     st.caption(
         f"Latest available prices · automatically refreshed every {REFRESH_SECONDS} seconds"
     )
