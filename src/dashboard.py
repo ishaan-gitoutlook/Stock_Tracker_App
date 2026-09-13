@@ -46,6 +46,7 @@ def render_sidebar() -> List[str]:
             """,
             unsafe_allow_html=True,
         )
+        st.radio("Appearance", ["Light", "Dark"], horizontal=True, key="theme_mode")
         st.header("Configuration")
         with st.form("add_ticker_form", clear_on_submit=True):
             new_ticker = st.text_input(
@@ -228,6 +229,85 @@ def render_ai_assistant(selected_symbols: List[str]) -> None:
         st.rerun()
 
 
+def render_theme_styles(theme: str) -> None:
+    """Apply explicit readable colors for the selected light or dark theme."""
+    if theme == "Dark":
+        colors = {
+            "page": "#0b1020",
+            "surface": "#121a2c",
+            "surface_alt": "#18243a",
+            "text": "#f4f7ff",
+            "muted": "#aab5ca",
+            "border": "rgba(151, 164, 255, .24)",
+            "sidebar": "#10172a",
+            "input": "#0d1425",
+        }
+    else:
+        colors = {
+            "page": "#f8faff",
+            "surface": "#ffffff",
+            "surface_alt": "#eef2ff",
+            "text": "#0b1220",
+            "muted": "#5f6f89",
+            "border": "rgba(61, 77, 155, .2)",
+            "sidebar": "#eef2ff",
+            "input": "#ffffff",
+        }
+
+    st.markdown(
+        f"""
+        <style>
+        :root {{
+            --ui-page: {colors['page']};
+            --ui-surface: {colors['surface']};
+            --ui-surface-alt: {colors['surface_alt']};
+            --ui-text: {colors['text']};
+            --ui-muted: {colors['muted']};
+            --ui-border: {colors['border']};
+            --ui-sidebar: {colors['sidebar']};
+            --ui-input: {colors['input']};
+        }}
+        [data-testid="stAppViewContainer"], [data-testid="stMain"] {{
+            background: var(--ui-page) !important;
+            color: var(--ui-text) !important;
+        }}
+        section[data-testid="stSidebar"] {{
+            background: var(--ui-sidebar) !important;
+            border-right: 1px solid var(--ui-border) !important;
+        }}
+        section[data-testid="stSidebar"] *, [data-testid="stMain"] p,
+        [data-testid="stMain"] label, [data-testid="stMain"] span {{
+            color: var(--ui-text);
+        }}
+        [data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] * {{ color: var(--ui-muted) !important; }}
+        h1, h2, h3, h4 {{ color: var(--ui-text) !important; }}
+        .hero-panel h1, .hero-panel p, .hero-panel .hero-stat strong, .hero-panel .hero-stat span {{ color: white !important; }}
+        .section-title {{ color: var(--ui-text) !important; }}
+        .section-subtitle {{ color: var(--ui-muted) !important; }}
+        div[data-testid="stMetric"] {{ background: var(--ui-surface) !important; border-color: var(--ui-border) !important; }}
+        div[data-testid="stMetricLabel"], div[data-testid="stMetricValue"] {{ color: var(--ui-text) !important; }}
+        div[data-testid="stMetricDelta"] {{ color: #16a86b !important; }}
+        [data-baseweb="input"] > div, [data-baseweb="select"] > div,
+        [data-testid="stTextInput"] input {{
+            background: var(--ui-input) !important;
+            color: var(--ui-text) !important;
+            border-color: var(--ui-border) !important;
+        }}
+        [data-baseweb="select"] *, [data-testid="stTextInput"] input::placeholder {{ color: var(--ui-text) !important; }}
+        [data-testid="stDataFrame"] {{ border-color: var(--ui-border) !important; background: var(--ui-surface) !important; }}
+        [data-testid="stButton"] button, [data-testid="stFormSubmitButton"] button {{ color: var(--ui-text) !important; border-color: var(--ui-border) !important; }}
+        .st-key-assistant_launcher, .st-key-assistant_launcher > div {{
+            top: 50% !important;
+            bottom: auto !important;
+            transform: translateY(-50%) !important;
+        }}
+        .st-key-assistant_launcher > div > button {{ color: white !important; }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def render_dashboard_app() -> None:
     """Main application runner."""
     st.set_page_config(page_title="Stock Tracker App", page_icon="💹", layout="wide")
@@ -371,6 +451,7 @@ def render_dashboard_app() -> None:
         unsafe_allow_html=True,
     )
     selected_symbols = render_sidebar()
+    render_theme_styles(st.session_state.get("theme_mode", "Light"))
     render_live_market(selected_symbols)
     with st.popover(
         "AI",
