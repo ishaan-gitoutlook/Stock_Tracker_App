@@ -1,5 +1,8 @@
 # 📈 Stock Tracker App
 
+[![CI/CD Pipeline](https://github.com/ishaan-gitoutlook/Stock_Tracker_App/actions/workflows/ci.yml/badge.svg)](https://github.com/ishaan-gitoutlook/Stock_Tracker_App/actions/workflows/ci.yml)
+[![CI: Jenkins](https://img.shields.io/badge/CI%2FCD-Jenkins%20Pipeline-D24939.svg?logo=jenkins&logoColor=white)](Jenkinsfile)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?logo=docker&logoColor=white)](Dockerfile)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.37%2B-FF4B4B.svg?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
@@ -19,6 +22,7 @@ A modern, full-stack real-time financial tracking dashboard and REST API built f
 - [🌐 REST API Reference](#-rest-api-reference)
 - [🚀 Quick Start (Local Setup)](#-quick-start-local-setup)
 - [🧪 Running Automated Tests](#-running-automated-tests)
+- [⚙️ CI/CD Automation (GitHub Actions & Jenkins)](#️-cicd-automation-github-actions--jenkins)
 - [☁️ Cloud Deployment Guide](#️-cloud-deployment-guide)
   - [1. Deploying FastAPI to Render](#1-deploying-fastapi-to-render)
   - [2. Deploying Streamlit to Streamlit Cloud](#2-deploying-streamlit-to-streamlit-community-cloud)
@@ -111,6 +115,10 @@ Stock_Tracker_App/
 │   ├── test_api_client.py                # HTTP client serialization & error handling tests
 │   └── test_dashboard.py                 # Universe indexing & fallback mode tests
 │
+├── .github/                              # CI/CD automation workflows
+│   └── workflows/ci.yml                  # GitHub Actions test and quality pipeline
+├── Jenkinsfile                           # Declarative Jenkins CI/CD pipeline
+├── Dockerfile                            # Production container definition
 ├── main.py                               # Application entry point for Streamlit Web Dashboard
 ├── cli.py                                # Application entry point for Terminal CLI Tracker
 ├── requirements.txt                      # Production & development dependencies
@@ -236,6 +244,26 @@ Ran 15 tests in 0.005s
 
 OK
 ```
+
+---
+
+## ⚙️ CI/CD Automation (GitHub Actions & Jenkins)
+
+The project includes continuous integration and automated quality pipelines through two enterprise-grade CI/CD setups:
+
+### 1. GitHub Actions (`.github/workflows/ci.yml`)
+- **Automated Trigger:** Executes automatically on every `git push` or `pull_request` to the `master` branch.
+- **Matrix Testing:** Validates the test suite concurrently across **Python 3.11** and **Python 3.12**.
+- **Pipeline Workflow:**
+  1. Dependency installation from `requirements.txt` with pip caching.
+  2. Execution of the complete 15-test unit suite (`python -m unittest discover tests`).
+  3. Integrity smoke test ensuring both FastAPI and Streamlit modules import cleanly.
+
+### 2. Jenkins Pipeline (`Jenkinsfile`)
+For teams utilizing Jenkins automation servers:
+- **Declarative Pipeline:** Contains isolated stages for `Checkout`, `Setup Environment`, `Unit Tests`, `Smoke Test`, and `Deploy Notification`.
+- **Clean Workspace:** Automatically generates and tears down a disposable virtual environment (`.venv-ci`) for each run.
+- **Docker Support (`Dockerfile`):** Ready to be built and executed inside containerized Jenkins agents or Kubernetes pods.
 
 ---
 
