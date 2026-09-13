@@ -6,20 +6,23 @@ from typing import Dict, List, Tuple
 import streamlit as st
 
 from src.api_client import APIClientError, fetch_quotes
-from src.tracker import DEFAULT_SYMBOLS, REFRESH_SECONDS, StockQuote
+from src.tracker import DEFAULT_SYMBOLS, REFRESH_SECONDS, StockQuote, get_prices
 from src.universes import MARKET_UNIVERSES, get_ticker_options
 
 
 @st.cache_data(ttl=REFRESH_SECONDS - 1, show_spinner=False)
-def load_prices(symbols: Tuple[str, ...]) -> Dict[str, StockQuote]:
-    """Fetch quotes through the FastAPI backend with a short UI cache."""
-    return fetch_quotes(symbols)
+def load_prices(symbols: Tuple[str, ...]) -> Tuple[Dict[str, StockQuote], str]:
+    """Fetch quotes through the FastAPI backend with graceful fallback to direct fetching."""
+    try:
+        return fetch_quotes(symbols), "FastAPI"
+    except APIClientError:
+        return get_prices(symbols), "Direct"
 
 
 def render_dashboard() -> None:
     """Render the main view of metrics and market overview."""
     st.title("📈 Stock Tracker App")
-    st.caption("Live financial market quotes powered by the FastAPI backend.")
+    st.caption("Live financial market quotes powered by Yahoo Finance.")
 
     if "available_symbols" not in st.session_state:
         st.session_state.available_symbols = list(DEFAULT_SYMBOLS)
@@ -61,11 +64,11 @@ def render_dashboard() -> None:
         return
 
     try:
-        quotes = load_prices(tuple(selected_symbols))
-    except APIClientError as err:
-        st.error(f"Stock API unavailable: {err}")
-        st.info("Start the backend with: uvicorn src.api:app --reload")
+        quotes, source = load_prices(tuple(selected_symbols))
+    except Exception as err:
+        st.error(f"Unable to retrieve stock data: {err}")
         return
+
     if not quotes:
         st.warning("No price data could be retrieved. Please check your connection or symbol names.")
         return
@@ -105,7 +108,7 @@ def render_dashboard() -> None:
         })
     st.dataframe(table_data, hide_index=True, use_container_width=True)
     timestamp = time.strftime("%H:%M:%S")
-    st.caption(f"Last updated: {timestamp} · Auto-refreshing every {REFRESH_SECONDS}s")
+    st.caption(f"Last updated: {timestamp} · Auto-refreshing every {REFRESH_SECONDS}s · Source: {source}")
 
 
 @st.fragment(run_every=f"{REFRESH_SECONDS}s")

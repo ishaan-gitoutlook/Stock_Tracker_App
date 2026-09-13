@@ -1,7 +1,9 @@
 """Tests for dashboard ticker-universe selection behavior."""
 
 import unittest
+from unittest.mock import patch
 
+from src.api_client import APIClientError
 from src.universes import MARKET_UNIVERSES, get_ticker_options
 
 
@@ -33,6 +35,41 @@ class TestTickerUniverses(unittest.TestCase):
         self.assertEqual(options[: len(universe_symbols)], list(universe_symbols))
         self.assertEqual(options[-1], "CUSTOM")
         self.assertEqual(len(options), len(set(options)))
+
+
+class TestDashboardLoadPrices(unittest.TestCase):
+    """Verify load_prices handles API errors by falling back to direct fetching."""
+
+    def setUp(self):
+        from src.dashboard import load_prices
+        load_prices.clear()
+
+    @patch("src.dashboard.fetch_quotes")
+    def test_load_prices_uses_fastapi_when_reachable(self, mock_fetch):
+        from src.dashboard import load_prices
+        from src.tracker import StockQuote
+
+        mock_fetch.return_value = {
+            "AAPL": StockQuote(symbol="AAPL", name="Apple Inc.", price=150.0, currency="USD")
+        }
+
+        quotes, source = load_prices(("AAPL",))
+        self.assertEqual(source, "FastAPI")
+        self.assertIn("AAPL", quotes)
+
+    @patch("src.dashboard.get_prices")
+    @patch("src.dashboard.fetch_quotes", side_effect=APIClientError("unreachable"))
+    def test_load_prices_falls_back_to_direct_when_api_unreachable(self, _mock_fetch, mock_get_prices):
+        from src.dashboard import load_prices
+        from src.tracker import StockQuote
+
+        mock_get_prices.return_value = {
+            "AAPL": StockQuote(symbol="AAPL", name="Apple Inc.", price=150.0, currency="USD")
+        }
+
+        quotes, source = load_prices(("AAPL",))
+        self.assertEqual(source, "Direct")
+        self.assertIn("AAPL", quotes)
 
 
 if __name__ == "__main__":
