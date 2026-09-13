@@ -2,43 +2,34 @@
 
 import time
 from typing import Dict, List, Tuple
+
 import streamlit as st
 
-from src.tracker import (
-    DEFAULT_SYMBOLS,
-    REFRESH_SECONDS,
-    StockQuote,
-    get_prices,
-)
+from src.api_client import APIClientError, fetch_quotes
+from src.tracker import DEFAULT_SYMBOLS, REFRESH_SECONDS, StockQuote
+from src.universes import MARKET_UNIVERSES, get_ticker_options
 
 
 @st.cache_data(ttl=REFRESH_SECONDS - 1, show_spinner=False)
 def load_prices(symbols: Tuple[str, ...]) -> Dict[str, StockQuote]:
-    """Fetch quotes with short TTL cache to avoid duplicate API spam."""
-    return get_prices(symbols)
+    """Fetch quotes through the FastAPI backend with a short UI cache."""
+    return fetch_quotes(symbols)
 
 
 def render_dashboard() -> None:
     """Render the main view of metrics and market overview."""
     st.title("📈 Stock Tracker App")
-    st.caption("Live financial market quotes powered by Yahoo Finance.")
+    st.caption("Live financial market quotes powered by the FastAPI backend.")
 
-    # Initialize custom symbols in session state
     if "available_symbols" not in st.session_state:
         st.session_state.available_symbols = list(DEFAULT_SYMBOLS)
 
-    # Sidebar controls
     with st.sidebar:
         st.header("⚙️ Configuration")
 
-        # Custom Ticker Adder
         with st.form("add_ticker_form", clear_on_submit=True):
-            new_ticker = st.text_input(
-                "Add Ticker Symbol",
-                placeholder="e.g. NFLX, BABA, SPY",
-            ).strip().upper()
+            new_ticker = st.text_input("Add Ticker Symbol", placeholder="e.g. NFLX, BABA, SPY").strip().upper()
             add_button = st.form_submit_button("Add Symbol")
-
             if add_button and new_ticker:
                 if new_ticker not in st.session_state.available_symbols:
                     st.session_state.available_symbols.append(new_ticker)
@@ -46,43 +37,50 @@ def render_dashboard() -> None:
                 else:
                     st.info(f"{new_ticker} is already in the list.")
 
+        selected_universe = st.selectbox(
+            "Ticker universe",
+            ["My Watchlist", *MARKET_UNIVERSES],
+            help="Browse curated NIFTY 500 or Fortune 500 entities, or use your watchlist.",
+        )
+        ticker_options = get_ticker_options(
+            selected_universe, st.session_state.available_symbols
+        )
+
         selected_symbols: List[str] = st.multiselect(
-            "Tracked Stocks",
-            options=st.session_state.available_symbols,
-            default=st.session_state.available_symbols[:4],
+            "Tracked Stocks / Entities", options=ticker_options, default=ticker_options[:4]
         )
 
         st.divider()
-        st.markdown(
-            "💡 **Tip**: Type any valid ticker symbol into the input box above to track it live."
-        )
+        if st.button("↻ Refresh now", use_container_width=True):
+            load_prices.clear()
+            st.rerun()
+        st.markdown("💡 **Tip**: Choose a universe, select its entities, or add any valid ticker symbol.")
 
     if not selected_symbols:
         st.info("👈 Please select or add at least one stock from the sidebar.")
         return
 
-    # Fetch live quotes
-    quotes = load_prices(tuple(selected_symbols))
-
+    try:
+        quotes = load_prices(tuple(selected_symbols))
+    except APIClientError as err:
+        st.error(f"Stock API unavailable: {err}")
+        st.info("Start the backend with: uvicorn src.api:app --reload")
+        return
     if not quotes:
         st.warning("No price data could be retrieved. Please check your connection or symbol names.")
         return
 
-    # Check for any symbols that failed
     missing_symbols = set(selected_symbols) - set(quotes.keys())
     if missing_symbols:
         st.warning(f"Could not retrieve data for: {', '.join(sorted(missing_symbols))}")
 
-    # Top Metric Cards
     cols = st.columns(min(len(quotes), 4))
     for idx, (sym, quote_data) in enumerate(quotes.items()):
-        col = cols[idx % 4]
-        with col:
+        with cols[idx % 4]:
             delta_str = None
             if quote_data.change is not None and quote_data.change_percent is not None:
                 sign = "+" if quote_data.change >= 0 else ""
                 delta_str = f"{sign}{quote_data.change:.2f} ({sign}{quote_data.change_percent:.2f}%)"
-
             st.metric(
                 label=f"{sym} · {quote_data.name}",
                 value=f"{quote_data.currency} {quote_data.price:.2f}",
@@ -90,46 +88,35 @@ def render_dashboard() -> None:
             )
 
     st.divider()
-
-    # Market Overview Table
     st.subheader("📊 Market Overview")
     table_data = []
-    for sym, q in quotes.items():
+    for sym, quote_data in quotes.items():
         day_range = "N/A"
-        if q.day_low is not None and q.day_high is not None:
-            day_range = f"{q.day_low:.2f} - {q.day_high:.2f}"
-
-        table_data.append(
-            {
-                "Symbol": sym,
-                "Company": q.name,
-                "Price": f"{q.currency} {q.price:.2f}",
-                "Change": f"{q.change:+.2f}" if q.change is not None else "N/A",
-                "Change (%)": f"{q.change_percent:+.2f}%" if q.change_percent is not None else "N/A",
-                "Day Range": day_range,
-                "Volume": f"{q.volume:,}" if q.volume else "N/A",
-            }
-        )
-
+        if quote_data.day_low is not None and quote_data.day_high is not None:
+            day_range = f"{quote_data.day_low:.2f} - {quote_data.day_high:.2f}"
+        table_data.append({
+            "Symbol": sym,
+            "Company": quote_data.name,
+            "Price": f"{quote_data.currency} {quote_data.price:.2f}",
+            "Change": f"{quote_data.change:+.2f}" if quote_data.change is not None else "N/A",
+            "Change (%)": f"{quote_data.change_percent:+.2f}%" if quote_data.change_percent is not None else "N/A",
+            "Day Range": day_range,
+            "Volume": f"{quote_data.volume:,}" if quote_data.volume else "N/A",
+        })
     st.dataframe(table_data, hide_index=True, use_container_width=True)
-
     timestamp = time.strftime("%H:%M:%S")
     st.caption(f"Last updated: {timestamp} · Auto-refreshing every {REFRESH_SECONDS}s")
 
 
 @st.fragment(run_every=f"{REFRESH_SECONDS}s")
 def live_dashboard() -> None:
-    """Fragment for periodic auto-refresh without full page reload."""
+    """Fragment for periodic auto-refresh without full page reloads."""
     render_dashboard()
 
 
 def render_dashboard_app() -> None:
     """Main application runner."""
-    st.set_page_config(
-        page_title="Stock Tracker App",
-        page_icon="📈",
-        layout="wide",
-    )
+    st.set_page_config(page_title="Stock Tracker App", page_icon="📈", layout="wide")
     live_dashboard()
 
 
