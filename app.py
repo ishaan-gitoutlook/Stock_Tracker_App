@@ -1,18 +1,10 @@
-import time
+"""Compatibility entry point for the command-line stock tracker."""
 
-
-def stock_tracker():
-    stocks = {
-        "AAPL": {"price": 175.45, "symbol": "AAPL"},
-        "MSFT": {"price": 320.89, "symbol": "MSFT"},
-        "GOOG": {"price": 135.67, "symbol": "GOOG"}
-    }
-
-    while True:
-        for symbol in stocks:
-            print(f"{stocks[symbol]['symbol']}: ${stocks[symbol]['price']:.2f}")
-        time.sleep(5)  # Refresh every 5 seconds
+from src.app import stock_tracker
 
 
 if __name__ == "__main__":
-    stock_tracker()
+    try:
+        stock_tracker()
+    except KeyboardInterrupt:
+        print("\nStock tracker stopped.")
