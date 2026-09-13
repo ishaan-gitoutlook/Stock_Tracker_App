@@ -59,6 +59,19 @@ def health() -> dict:
     return {"status": "ok"}
 
 
+@app.get("/")
+def root() -> dict:
+    """Provide a discoverable landing response for the deployed API."""
+    return {
+        "service": "Stock Tracker API",
+        "status": "ok",
+        "docs": "/docs",
+        "health": "/health",
+        "quotes": "/api/v1/quotes",
+        "universes": "/api/v1/universes",
+    }
+
+
 @app.get("/api/v1/universes", response_model=List[UniverseResponse])
 def list_universes() -> List[UniverseResponse]:
     """List the curated ticker universes available to the dashboard."""
