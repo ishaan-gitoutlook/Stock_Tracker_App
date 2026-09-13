@@ -6,7 +6,7 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.37%2B-FF4B4B.svg?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Tests](https://img.shields.io/badge/Tests-29%20Passing-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/Tests-33%20Passing-brightgreen.svg)](tests/)
 [![AI Assistant](https://img.shields.io/badge/AI%20Assistant-Gemini%20%7C%20Ollama%20%7C%20Heuristic-purple.svg)]()
 [![Architecture](https://img.shields.io/badge/Architecture-2--Tier%20Microservice-orange.svg)]()
 [![License](https://img.shields.io/badge/License-Educational%20Use-lightgrey.svg)]()
@@ -83,6 +83,9 @@ The application adopts an enterprise microservice pattern with built-in resilien
 ### 📊 Reactive Frontend (Streamlit)
 - **Live Price Updates:** Real-time stock ticker quotes refreshed every 5 seconds using non-blocking Streamlit fragments (`@st.fragment`).
 - **Interactive Metric Cards:** Displays company name, current market price, and colored price movement deltas ($\Delta$ with absolute value and percentage).
+- **Light & Dark Theme Modes:** Built-in theme selector with high-contrast color systems tailored for day and night viewing.
+- **Floating AI Assistant Launcher:** Bottom-right floating trigger button (`💬 AI`) with smooth CSS pulse animation for instant drawer-based chat without page clutter.
+- **Hero Status Banner:** Gradient header panel with live ticker counter and real-time connection status dot (`● LIVE`).
 - **Curated Market Universes:** Filter and track major stock collections, including **NIFTY 500**, **Fortune 500**, and personal watchlists.
 - **Dynamic Ticker Adder:** Search and add any valid global ticker symbol (e.g., `NVDA`, `TSLA`, `RELIANCE.NS`, `BTC-USD`) on the fly with automatic deduplication.
 - **Comprehensive Market Table:** Detailed overview containing daily price range ($Low - High$), 24-hour volume, and net change.
@@ -94,6 +97,8 @@ The application adopts an enterprise microservice pattern with built-in resilien
 - **Health Checks:** Built-in `/health` probe for automated container and service monitoring.
 
 ### 💻 Command-Line Interface (CLI)
+- **Terminal Price Ticker:** Lightweight console view with formatted ASCII tables and auto-clearing screens for terminal enthusiasts.
+
 ### 🤖 Free AI Financial Assistant
 - **Dual Cloud & Local Execution:** Seamlessly switches between **Google Gemini Flash (Free Cloud Tier)** and **Ollama (100% Offline Local LLM)**.
 - **Context-Aware Reasoning:** Injects the live prices, deltas, volumes, and daily ranges of currently selected stocks directly into the model's prompt.
@@ -286,9 +291,9 @@ python -m unittest discover tests
 
 Expected output:
 ```text
-.............................
+.................................
 ----------------------------------------------------------------------
-Ran 29 tests in 0.727s
+Ran 33 tests in 0.687s
 
 OK
 ```
