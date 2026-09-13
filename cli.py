@@ -1,6 +1,6 @@
-"""Compatibility entry point for the command-line stock tracker."""
+"""Command-line interface entry point for the stock tracker."""
 
-from src.app import stock_tracker
+from src.tracker import stock_tracker
 
 
 if __name__ == "__main__":

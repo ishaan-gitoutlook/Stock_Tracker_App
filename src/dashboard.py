@@ -1,6 +1,6 @@
 import streamlit as st
 
-from src.app import REFRESH_SECONDS, SYMBOLS, get_prices
+from src.tracker import REFRESH_SECONDS, SYMBOLS, get_prices
 
 
 st.set_page_config(page_title="Stock Tracker", page_icon="📈", layout="wide")
