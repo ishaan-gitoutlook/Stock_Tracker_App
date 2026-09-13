@@ -190,18 +190,76 @@ def render_dashboard_app() -> None:
     st.markdown(
         """
         <style>
+        :root {
+            --stock-indigo: #5b5ce2;
+            --stock-cyan: #18c8c8;
+            --stock-pink: #e85aad;
+        }
+        [data-testid="stAppViewContainer"] {
+            background:
+                radial-gradient(circle at 8% 0%, rgba(91, 92, 226, 0.16), transparent 30rem),
+                radial-gradient(circle at 100% 20%, rgba(24, 200, 200, 0.12), transparent 28rem);
+        }
+        [data-testid="stHeader"] {
+            background: transparent;
+        }
+        h1 {
+            background: linear-gradient(90deg, var(--stock-indigo), var(--stock-cyan), var(--stock-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+        section[data-testid="stSidebar"] {
+            background: linear-gradient(180deg, rgba(91, 92, 226, 0.14), rgba(24, 200, 200, 0.07));
+            border-right: 1px solid rgba(91, 92, 226, 0.2);
+        }
+        div[data-testid="stMetric"] {
+            background: linear-gradient(135deg, rgba(91, 92, 226, 0.16), rgba(24, 200, 200, 0.08));
+            border: 1px solid rgba(91, 92, 226, 0.24);
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: 0 0.5rem 1.5rem rgba(32, 35, 84, 0.1);
+            transition: transform 160ms ease, box-shadow 160ms ease;
+        }
+        div[data-testid="stMetric"]:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0.8rem 1.8rem rgba(32, 35, 84, 0.18);
+        }
+        div[data-testid="stDataFrame"] {
+            border: 1px solid rgba(91, 92, 226, 0.2);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
         div[data-testid="stPopover"] {
             position: fixed;
-            right: 1.5rem;
-            bottom: 1.5rem;
+            right: 1rem;
+            bottom: 1rem;
             z-index: 999999;
         }
-        div[data-testid="stPopover"] button {
+        div[data-testid="stPopover"] > button {
             border-radius: 999px;
-            min-height: 3.25rem;
-            min-width: 3.25rem;
-            box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.25);
-            font-size: 1.25rem;
+            width: 2.35rem;
+            height: 2.35rem;
+            min-height: 2.35rem;
+            min-width: 2.35rem;
+            padding: 0;
+            border: 0;
+            color: white;
+            background: linear-gradient(135deg, var(--stock-indigo), var(--stock-pink));
+            box-shadow: 0 0.35rem 1rem rgba(91, 92, 226, 0.4);
+            font-size: 0.95rem;
+            line-height: 1;
+            transition: transform 160ms ease, box-shadow 160ms ease;
+            animation: assistant-pulse 3s ease-in-out infinite;
+        }
+        div[data-testid="stPopover"] > button:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0.5rem 1.2rem rgba(232, 90, 173, 0.45);
+        }
+        @keyframes assistant-pulse {
+            0%, 100% { box-shadow: 0 0.35rem 1rem rgba(91, 92, 226, 0.35); }
+            50% { box-shadow: 0 0.35rem 1.25rem rgba(24, 200, 200, 0.55); }
         }
         </style>
         """,
