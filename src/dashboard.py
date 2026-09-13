@@ -362,6 +362,10 @@ def render_dashboard_app() -> None:
         .st-key-assistant_launcher > div > button:hover { transform: scale(1.08); box-shadow: 0 .5rem 1.2rem rgba(232,90,173,.45); }
         @keyframes assistant-pulse { 0%,100% { box-shadow: 0 .35rem 1rem rgba(91,92,226,.35); } 50% { box-shadow: 0 .35rem 1.25rem rgba(24,200,200,.55); } }
         @media (max-width: 700px) { .hero-panel { align-items: flex-start; flex-direction: column; padding: 1.4rem; } .hero-stat { min-width: 7rem; } }
+        [data-testid="stMetricLabel"], [data-testid="stMetricValue"], [data-testid="stMetricDelta"] { color: #0b1220 !important; }
+        section[data-testid="stSidebar"] label, section[data-testid="stSidebar"] p, section[data-testid="stSidebar"] .stMarkdown { color: #26324a !important; }
+        .st-key-assistant_launcher, .st-key-assistant_launcher > div, .st-key-assistant_launcher [data-testid="stPopover"] { width: max-content !important; min-width: 0 !important; max-width: max-content !important; background: transparent !important; border: 0 !important; }
+        .st-key-assistant_launcher button[data-testid="stPopoverButton"], .st-key-assistant_launcher > div > button { width: 3.15rem !important; min-width: 3.15rem !important; max-width: 3.15rem !important; height: 3.15rem !important; min-height: 3.15rem !important; padding: 0 !important; }
         </style>
         """,
         unsafe_allow_html=True,
@@ -371,7 +375,7 @@ def render_dashboard_app() -> None:
     with st.popover(
         "AI",
         icon="💬",
-        type="primary",
+        type="secondary",
         key="assistant_launcher",
         help="Open the stock performance assistant",
     ):
