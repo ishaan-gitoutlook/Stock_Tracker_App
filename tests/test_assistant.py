@@ -7,7 +7,10 @@ from unittest.mock import MagicMock, patch
 from src.assistant import (
     GeminiProvider,
     HeuristicFinancialAnalyst,
+    INVESTMENT_DISCLAIMER,
+    MAX_OUTPUT_TOKENS,
     OllamaProvider,
+    OUT_OF_SCOPE_REPLY,
     ask_assistant,
     build_market_context,
     build_system_prompt,
@@ -157,6 +160,30 @@ class TestProviderIntegration(unittest.TestCase):
         res = provider.generate("How is Microsoft doing?", "system prompt")
         self.assertEqual(res, "Microsoft showed a slight pull-back.")
 
+    @patch("src.assistant.urlopen")
+    def test_gemini_provider_uses_output_token_cap(self, mock_urlopen):
+        mock_response = MagicMock()
+        mock_response.__enter__.return_value = mock_response
+        mock_response.read.return_value = json.dumps({
+            "candidates": [{"content": {"parts": [{"text": "A stock response."}]}}]
+        }).encode("utf-8")
+        mock_urlopen.return_value = mock_response
+
+        GeminiProvider(api_key="fake-key-123").generate("How is AAPL doing?", "system prompt")
+        payload = json.loads(mock_urlopen.call_args.args[0].data)
+        self.assertEqual(payload["generationConfig"]["maxOutputTokens"], MAX_OUTPUT_TOKENS)
+
+    @patch("src.assistant.urlopen")
+    def test_ollama_provider_uses_output_token_cap(self, mock_urlopen):
+        mock_response = MagicMock()
+        mock_response.__enter__.return_value = mock_response
+        mock_response.read.return_value = json.dumps({"response": "A stock response."}).encode("utf-8")
+        mock_urlopen.return_value = mock_response
+
+        OllamaProvider().generate("How is AAPL doing?", "system prompt")
+        payload = json.loads(mock_urlopen.call_args.args[0].data)
+        self.assertEqual(payload["options"]["num_predict"], MAX_OUTPUT_TOKENS)
+
     @patch("src.assistant.get_configured_gemini_key", return_value=None)
     @patch("src.assistant.OllamaProvider.is_available", return_value=False)
     def test_ask_assistant_fallback_to_heuristic(self, _mock_ollama, _mock_gemini):
@@ -167,6 +194,30 @@ class TestProviderIntegration(unittest.TestCase):
         reply, provider_name = ask_assistant("Which stock is top gainer?", quotes)
         self.assertEqual(provider_name, "Built-in Financial Analyst")
         self.assertIn("TSLA", reply)
+
+    @patch("src.assistant.get_configured_gemini_key", return_value=None)
+    @patch("src.assistant.OllamaProvider.is_available", return_value=True)
+    def test_out_of_scope_question_returns_scope_reply_without_llm_call(self, mock_ollama, _mock_gemini):
+        quotes = {
+            "AAPL": StockQuote(symbol="AAPL", name="Apple Inc.", price=150.0, currency="USD")
+        }
+        with patch.object(OllamaProvider, "generate") as mock_generate:
+            reply, provider_name = ask_assistant("What is the weather today?", quotes)
+
+        self.assertEqual(reply, OUT_OF_SCOPE_REPLY)
+        self.assertEqual(provider_name, "Scope Guard")
+        mock_generate.assert_not_called()
+
+    @patch("src.assistant.get_configured_gemini_key", return_value=None)
+    @patch("src.assistant.OllamaProvider.is_available", return_value=False)
+    def test_stock_comparison_includes_investment_disclaimer(self, _mock_ollama, _mock_gemini):
+        quotes = {
+            "AAPL": StockQuote(symbol="AAPL", name="Apple Inc.", price=150.0, currency="USD", change=5.0, change_percent=3.0),
+            "MSFT": StockQuote(symbol="MSFT", name="Microsoft Corp.", price=300.0, currency="USD", change=2.0, change_percent=1.0),
+        }
+        reply, _provider_name = ask_assistant("Which stock is better?", quotes)
+
+        self.assertIn(INVESTMENT_DISCLAIMER, reply)
 
 
 if __name__ == "__main__":

@@ -120,6 +120,8 @@ The assistant operates with **zero mandatory setup** through a 3-tier resolution
 
 ### Supported Provider Options:
 
+The assistant is restricted to tracked-stock and stock-performance questions. Out-of-scope questions receive `I don't know.` It does not issue buy/sell recommendations, and comparison or investment-related questions include a risk disclaimer. Provider output is capped at 10,000 tokens per query.
+
 1. **Option 1: Google Gemini (Free Cloud Tier — Recommended for Streamlit Cloud)**
    - Get a free API key from [Google AI Studio](https://aistudio.google.com/) (No credit card needed).
    - Locally: add `GEMINI_API_KEY="your-key"` to your `.env` or environment.

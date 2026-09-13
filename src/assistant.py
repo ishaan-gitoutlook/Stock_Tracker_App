@@ -14,6 +14,47 @@ logger = logging.getLogger(__name__)
 DEFAULT_OLLAMA_URL = "http://127.0.0.1:11434"
 DEFAULT_OLLAMA_MODEL = "llama3.2:3b"
 DEFAULT_GEMINI_MODEL = "gemini-1.5-flash"
+MAX_OUTPUT_TOKENS = 10_000
+OUT_OF_SCOPE_REPLY = "I don't know."
+INVESTMENT_DISCLAIMER = (
+    "Disclaimer: Comparing stocks does not guarantee future performance. "
+    "Investing involves risk, so make decisions at your own discretion."
+)
+
+STOCK_SCOPE_TERMS = (
+    "stock", "stocks", "share", "shares", "ticker", "symbol", "price", "quote",
+    "market", "performance", "gainer", "gainers", "loser", "losers", "gain",
+    "loss", "volume", "trading", "portfolio", "watchlist", "nifty", "fortune",
+    "invest", "investment", "buy", "sell", "dividend",
+)
+INVESTMENT_QUESTION_TERMS = (
+    "better", "best", "buy", "sell", "invest", "investment", "recommend",
+    "suggest", "worth", "choose", "pick", "should i",
+)
+
+
+def is_stock_question(question: str, quotes: Dict[str, StockQuote]) -> bool:
+    """Return whether a question is related to tracked stocks or performance."""
+    normalized = question.lower()
+    if any(term in normalized for term in STOCK_SCOPE_TERMS):
+        return True
+    return any(
+        symbol.lower() in normalized or quote.name.lower() in normalized
+        for symbol, quote in quotes.items()
+    )
+
+
+def needs_investment_disclaimer(question: str) -> bool:
+    """Identify questions that compare stocks or ask for investment direction."""
+    normalized = question.lower()
+    return any(term in normalized for term in INVESTMENT_QUESTION_TERMS)
+
+
+def apply_response_guardrails(question: str, response: str) -> str:
+    """Add the required risk disclaimer to investment-oriented responses."""
+    if needs_investment_disclaimer(question) and INVESTMENT_DISCLAIMER not in response:
+        return f"{response.rstrip()}\n\n{INVESTMENT_DISCLAIMER}"
+    return response
 
 
 def build_market_context(quotes: Dict[str, StockQuote]) -> str:
@@ -37,11 +78,15 @@ def build_system_prompt(quotes: Dict[str, StockQuote]) -> str:
     context = build_market_context(quotes)
     return (
         "You are an educational financial market assistant for the Stock Tracker App.\n"
-        "Your role is to explain financial concepts, analyze market movements, and compare stocks based on real-time data.\n"
+        "Your role is to answer questions about tracked stocks and their performance using the provided live data.\n"
         "IMPORTANT RULES:\n"
-        "1. Ground all price and performance statements strictly in the provided Live Market Snapshot.\n"
-        "2. Do NOT provide personalized investment advice or buy/sell recommendations.\n"
-        "3. Always keep your response concise, educational, and professional (2-4 paragraphs maximum).\n\n"
+        "1. Answer ONLY questions about stocks, tracked entities, market prices, or their performance.\n"
+        "2. For anything outside that scope, reply exactly: I don't know.\n"
+        "3. Ground all price and performance statements strictly in the provided Live Market Snapshot.\n"
+        "4. Do NOT act as an all-knowing assistant or invent facts.\n"
+        "5. Do NOT provide personalized investment advice or buy/sell recommendations. Never tell the user to buy, sell, or invest in a stock.\n"
+        "6. If comparing which stock is better, explain the comparison neutrally and include a risk disclaimer.\n"
+        "7. Always keep your response concise, educational, and professional.\n\n"
         f"{context}\n"
     )
 
@@ -61,7 +106,7 @@ class GeminiProvider:
         full_content = f"{system_instruction}\n\nUser Question: {prompt}\nAssistant:"
         payload = {
             "contents": [{"parts": [{"text": full_content}]}],
-            "generationConfig": {"temperature": 0.3, "maxOutputTokens": 600},
+            "generationConfig": {"temperature": 0.3, "maxOutputTokens": MAX_OUTPUT_TOKENS},
         }
 
         try:
@@ -107,6 +152,7 @@ class OllamaProvider:
             "prompt": prompt,
             "system": system_instruction,
             "stream": False,
+            "options": {"num_predict": MAX_OUTPUT_TOKENS, "temperature": 0.3},
         }
 
         try:
@@ -234,7 +280,10 @@ def ask_assistant(
     """
     clean_question = question.strip()
     if not clean_question:
-        return "Please ask a question about the market or your selected stocks.", "System"
+        return OUT_OF_SCOPE_REPLY, "Scope Guard"
+
+    if not is_stock_question(clean_question, quotes):
+        return OUT_OF_SCOPE_REPLY, "Scope Guard"
 
     system_instruction = build_system_prompt(quotes)
 
@@ -244,7 +293,7 @@ def ask_assistant(
         provider = GeminiProvider(api_key=gemini_key)
         response = provider.generate(clean_question, system_instruction)
         if response:
-            return response, "Gemini Flash (Free Cloud)"
+            return apply_response_guardrails(clean_question, response), "Gemini Flash (Free Cloud)"
 
     # 2. Try Local Ollama Instance
     ollama_url = ollama_base_url or os.getenv("OLLAMA_BASE_URL", DEFAULT_OLLAMA_URL)
@@ -254,8 +303,8 @@ def ask_assistant(
     if ollama.is_available():
         response = ollama.generate(clean_question, system_instruction)
         if response:
-            return response, f"Ollama ({model})"
+            return apply_response_guardrails(clean_question, response), f"Ollama ({model})"
 
     # 3. Fallback to Heuristic Financial Analyst
     heuristic_reply = HeuristicFinancialAnalyst.answer(clean_question, quotes)
-    return heuristic_reply, "Built-in Financial Analyst"
+    return apply_response_guardrails(clean_question, heuristic_reply), "Built-in Financial Analyst"
