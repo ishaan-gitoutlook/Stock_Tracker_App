@@ -281,7 +281,7 @@ def render_theme_styles(theme: str) -> None:
         }}
         [data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] * {{ color: var(--ui-muted) !important; }}
         h1, h2, h3, h4 {{ color: var(--ui-text) !important; }}
-        .hero-panel h1, .hero-panel p, .hero-panel .hero-stat strong, .hero-panel .hero-stat span {{ color: white !important; }}
+        .hero-panel h1, .hero-panel .hero-copy h1, .hero-panel p, .hero-panel .hero-stat strong, .hero-panel .hero-stat span {{ color: white !important; -webkit-text-fill-color: white !important; background: none !important; }}
         .section-title {{ color: var(--ui-text) !important; }}
         .section-subtitle {{ color: var(--ui-muted) !important; }}
         div[data-testid="stMetric"] {{ background: var(--ui-surface) !important; border-color: var(--ui-border) !important; }}
@@ -301,7 +301,8 @@ def render_theme_styles(theme: str) -> None:
             bottom: auto !important;
             transform: translateY(-50%) !important;
         }}
-        .st-key-assistant_launcher > div > button {{ color: white !important; }}
+        .st-key-assistant_launcher > div > button, button[data-testid="stPopoverButton"] {{ color: white !important; background: #5262d9 !important; border: 2px solid white !important; border-radius: 999px !important; box-shadow: 0 8px 24px rgba(27, 39, 92, .28) !important; }}
+        button[data-testid="stPopoverButton"] {{ width: 3rem !important; min-width: 3rem !important; max-width: 3rem !important; height: 3rem !important; min-height: 3rem !important; padding: 0 !important; }}
         </style>
         """,
         unsafe_allow_html=True,
