@@ -2,7 +2,7 @@
 
 import json
 import os
-from typing import Dict, Iterable
+from typing import Dict, Iterable, Tuple
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote
 from urllib.request import Request, urlopen
@@ -78,8 +78,6 @@ def send_chat_message(
     Raises:
         APIClientError if the API cannot be reached or returns an error.
     """
-    from typing import Tuple
-
     normalized = [symbol.strip().upper() for symbol in symbols if symbol.strip()]
     api_url = configured_api_url(base_url)
     url = f"{api_url}/api/v1/chat"
