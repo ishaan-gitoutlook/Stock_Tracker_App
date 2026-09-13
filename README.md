@@ -1,14 +1,17 @@
 # 📈 Stock Tracker App
 
-An interactive real-time stock price tracker and dashboard built with Python and Streamlit for educational purposes.
+An interactive real-time stock price tracker and financial dashboard built with Python and Streamlit for educational purposes.
 
 ---
 
 ## ✨ Features
-- **Live Price Updates**: Automatically fetches and updates stock prices via Yahoo Finance every 5 seconds.
-- **Interactive Web Dashboard**: Built with Streamlit, providing real-time metric cards and market data tables.
-- **Stock Selection**: Customize stocks dynamically from the sidebar.
-- **Terminal CLI Mode**: Includes a terminal ticker mode for viewing live prices directly in the console.
+- **Concurrent Live Updates**: Fast, asynchronous stock quotes from Yahoo Finance fetched in parallel via `ThreadPoolExecutor`.
+- **Interactive Metric Cards**: Displays real-time prices, currency, company names, and daily price change + percentage change ($\Delta$).
+- **Market Overview Table**: Detailed data table including daily price range (Low - High), trading volume, and net movement.
+- **Dynamic Ticker Search**: Add any global stock ticker symbol directly through the sidebar.
+- **Auto-Refresh**: Live periodic updates every 5 seconds using Streamlit fragments without full page reloads.
+- **Terminal CLI Mode**: Lightweight console ticker view with formatted output.
+- **Built-in Unit Tests**: Clean test coverage using Python's standard `unittest` framework.
 
 ---
 
@@ -43,6 +46,11 @@ streamlit run main.py
 python cli.py
 ```
 
+### 4. Run Unit Tests
+```bash
+python -m unittest discover tests
+```
+
 ---
 
 ## 📁 Project Structure
@@ -51,9 +59,11 @@ python cli.py
 Stock_Tracker_App/
 ├── src/
 │   ├── __init__.py       # Package marker
-│   ├── tracker.py        # Yahoo Finance stock price fetching logic
-│   └── dashboard.py      # Streamlit web dashboard components
-│
+│   ├── tracker.py        # Core financial data models & parallel Yahoo Finance fetcher
+│   └── dashboard.py      # Streamlit web dashboard components & UI layout
+├── tests/
+│   ├── __init__.py       # Test package marker
+│   └── test_tracker.py   # Unit tests for calculations, parsing, and error handling
 ├── main.py               # Main entry point for Streamlit Web Dashboard
 ├── cli.py                # Entry point for Terminal CLI Tracker
 ├── requirements.txt      # Python dependencies (streamlit)

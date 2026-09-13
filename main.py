@@ -3,4 +3,6 @@
 Run with: streamlit run main.py
 """
 
-import src.dashboard  # noqa: F401,E402
+from src.dashboard import render_dashboard_app
+
+render_dashboard_app()
