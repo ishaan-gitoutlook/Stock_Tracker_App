@@ -6,11 +6,12 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.37%2B-FF4B4B.svg?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Tests](https://img.shields.io/badge/Tests-15%20Passing-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/Tests-29%20Passing-brightgreen.svg)](tests/)
+[![AI Assistant](https://img.shields.io/badge/AI%20Assistant-Gemini%20%7C%20Ollama%20%7C%20Heuristic-purple.svg)]()
 [![Architecture](https://img.shields.io/badge/Architecture-2--Tier%20Microservice-orange.svg)]()
 [![License](https://img.shields.io/badge/License-Educational%20Use-lightgrey.svg)]()
 
-A modern, full-stack real-time financial tracking dashboard and REST API built for educational purposes. Demonstrates a decoupled **2-tier microservice architecture** combining **FastAPI** for high-throughput asynchronous financial data ingestion and **Streamlit** for reactive data visualization, complete with automated fallback capabilities and interactive terminal CLI support.
+A modern, full-stack real-time financial tracking dashboard and REST API built for educational purposes. Demonstrates a decoupled **2-tier microservice architecture** combining **FastAPI** for high-throughput asynchronous financial data ingestion and **Streamlit** for reactive data visualization, complete with automated fallback capabilities, live AI assistant, and interactive terminal CLI support.
 
 ---
 
@@ -18,6 +19,7 @@ A modern, full-stack real-time financial tracking dashboard and REST API built f
 
 - [System Architecture](#-system-architecture)
 - [✨ Key Features](#-key-features)
+- [🤖 Free AI Financial Assistant](#-free-ai-financial-assistant)
 - [📁 Project Structure](#-project-structure)
 - [🌐 REST API Reference](#-rest-api-reference)
 - [🚀 Quick Start (Local Setup)](#-quick-start-local-setup)
@@ -92,7 +94,47 @@ The application adopts an enterprise microservice pattern with built-in resilien
 - **Health Checks:** Built-in `/health` probe for automated container and service monitoring.
 
 ### 💻 Command-Line Interface (CLI)
-- **Terminal Price Ticker:** Lightweight console view with formatted ASCII tables and auto-clearing screens for terminal enthusiasts.
+### 🤖 Free AI Financial Assistant
+- **Dual Cloud & Local Execution:** Seamlessly switches between **Google Gemini Flash (Free Cloud Tier)** and **Ollama (100% Offline Local LLM)**.
+- **Context-Aware Reasoning:** Injects the live prices, deltas, volumes, and daily ranges of currently selected stocks directly into the model's prompt.
+- **Offline Heuristic Fallback:** If no API key or Ollama daemon is running, a built-in financial rule engine answers questions (top gainers, losers, highest volume, price comparisons) with zero external dependencies.
+- **Interactive UI with Quick Prompts:** Single-click prompt chips (`📈 Top Gainer Today?`, `📉 Biggest Decline?`, `📊 Portfolio Summary`) and live chat interface.
+
+---
+
+## 🤖 Free AI Financial Assistant
+
+The assistant operates with **zero mandatory setup** through a 3-tier resolution hierarchy:
+
+```
+                  User Query
+                      │
+                      ▼
+         [ Live Market Context Injection ]
+                      │
+         ┌────────────┼────────────┐
+         ▼            ▼            ▼
+     [ Gemini ]   [ Ollama ]   [ Heuristic ]
+    (Free Cloud)   (Local)      (Offline)
+```
+
+### Supported Provider Options:
+
+1. **Option 1: Google Gemini (Free Cloud Tier — Recommended for Streamlit Cloud)**
+   - Get a free API key from [Google AI Studio](https://aistudio.google.com/) (No credit card needed).
+   - Locally: add `GEMINI_API_KEY="your-key"` to your `.env` or environment.
+   - Streamlit Cloud: add `GEMINI_API_KEY = "your-key"` to your app's **Secrets** settings.
+   - Teachers and friends opening your public link can chat with the assistant 24/7!
+
+2. **Option 2: Local Ollama (100% Offline & Private)**
+   - Install [Ollama](https://ollama.ai) and pull any model (e.g. `llama3.2:3b` or `tinyllama`):
+     ```bash
+     ollama run tinyllama
+     ```
+   - The app automatically detects Ollama running at `http://127.0.0.1:11434` and uses it locally with zero internet.
+
+3. **Option 3: Built-in Heuristic Analyst (Zero-Configuration Fallback)**
+   - If neither a Gemini key nor Ollama is configured, the built-in financial rule engine automatically takes over, answering questions about gainers, losers, price spreads, and volume rankings without any errors.
 
 ---
 
@@ -105,13 +147,16 @@ Stock_Tracker_App/
 │   ├── __init__.py                       # Package initializer
 │   ├── tracker.py                        # Core domain models & parallel data fetcher
 │   ├── universes.py                      # Curated market indices (NIFTY 500, Fortune 500)
+│   ├── assistant.py                      # Free LLM & heuristic financial assistant engine
 │   ├── api.py                            # FastAPI REST service & route definitions
 │   ├── api_client.py                     # Resilient HTTP client with secret resolution
-│   └── dashboard.py                      # Streamlit UI layouts, metrics & state handling
+│   └── dashboard.py                      # Streamlit UI layouts, metrics & AI chat
 │
-├── tests/                                # Automated unit test suite
+├── tests/                                # Automated unit test suite (29 tests)
 │   ├── __init__.py                       # Test package initializer
 │   ├── test_tracker.py                   # Data parsing, calculations & fallback tests
+│   ├── test_assistant.py                 # AI prompt generation, provider & heuristic tests
+│   ├── test_chat_api.py                  # FastAPI chat endpoint & client wrapper tests
 │   ├── test_api_client.py                # HTTP client serialization & error handling tests
 │   └── test_dashboard.py                 # Universe indexing & fallback mode tests
 │
@@ -142,6 +187,7 @@ When the FastAPI server is running (`http://127.0.0.1:8000`), the interactive do
 | `GET` | `/health` | System health check and status verification | `N/A` |
 | `GET` | `/api/v1/universes` | Lists all supported market index universes | `N/A` |
 | `GET` | `/api/v1/quotes` | Fetches live market data for requested symbols | `?symbols=AAPL,MSFT&fresh=false` |
+| `POST` | `/api/v1/chat` | AI Assistant answering queries with live market context | `{"message": "Top gainer?", "symbols": ["AAPL"]}` |
 
 #### Sample Quote Response (`GET /api/v1/quotes?symbols=AAPL`)
 ```json
@@ -238,9 +284,9 @@ python -m unittest discover tests
 
 Expected output:
 ```text
-...............
+.............................
 ----------------------------------------------------------------------
-Ran 15 tests in 0.005s
+Ran 29 tests in 0.727s
 
 OK
 ```

@@ -62,3 +62,43 @@ def fetch_quotes(
         }
     except (AttributeError, KeyError, TypeError, ValueError) as err:
         raise APIClientError("Stock API returned an invalid quote response") from err
+
+
+def send_chat_message(
+    message: str,
+    symbols: Iterable[str],
+    base_url: str | None = None,
+    ollama_model: str | None = None,
+    timeout: float = 25.0,
+) -> Tuple[str, str]:
+    """Send a question to the FastAPI chat assistant endpoint.
+
+    Returns:
+        Tuple of (reply_text, provider_name).
+    Raises:
+        APIClientError if the API cannot be reached or returns an error.
+    """
+    from typing import Tuple
+
+    normalized = [symbol.strip().upper() for symbol in symbols if symbol.strip()]
+    api_url = configured_api_url(base_url)
+    url = f"{api_url}/api/v1/chat"
+
+    payload = {
+        "message": message,
+        "symbols": normalized,
+        "ollama_model": ollama_model,
+    }
+    request = Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json", "Accept": "application/json"},
+        method="POST",
+    )
+
+    try:
+        with urlopen(request, timeout=timeout) as response:
+            data = json.load(response)
+        return str(data["reply"]), str(data["provider"])
+    except (HTTPError, URLError, TimeoutError, OSError, KeyError, ValueError) as err:
+        raise APIClientError(f"Could not reach stock API at {api_url}: {err}") from err

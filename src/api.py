@@ -40,10 +40,26 @@ class UniverseResponse(BaseModel):
     symbols: List[str]
 
 
+class ChatRequest(BaseModel):
+    """Request payload for the AI financial assistant."""
+
+    message: str
+    symbols: Optional[List[str]] = None
+    ollama_model: Optional[str] = None
+
+
+class ChatResponse(BaseModel):
+    """Response returned by the AI financial assistant."""
+
+    reply: str
+    provider: str
+    symbols_used: List[str]
+
+
 app = FastAPI(
     title="Stock Tracker API",
-    version="1.0.0",
-    description="Quote and market-universe service for the Streamlit dashboard.",
+    version="1.1.0",
+    description="Quote, market-universe, and AI Financial Assistant service for the Streamlit dashboard.",
 )
 
 
@@ -69,6 +85,7 @@ def root() -> dict:
         "health": "/health",
         "quotes": "/api/v1/quotes",
         "universes": "/api/v1/universes",
+        "chat": "/api/v1/chat",
     }
 
 
@@ -99,4 +116,23 @@ def list_quotes(
         quotes=quotes,
         requested_symbols=requested_symbols,
         missing_symbols=missing_symbols,
+    )
+
+
+@app.post("/api/v1/chat", response_model=ChatResponse)
+def chat_assistant(request: ChatRequest) -> ChatResponse:
+    """Answer market queries using live stock data and AI/heuristic engines."""
+    from src.assistant import ask_assistant
+
+    symbols = [s.strip().upper() for s in (request.symbols or []) if s.strip()]
+    quotes = get_prices(symbols) if symbols else {}
+    reply, provider = ask_assistant(
+        question=request.message,
+        quotes=quotes,
+        ollama_model=request.ollama_model,
+    )
+    return ChatResponse(
+        reply=reply,
+        provider=provider,
+        symbols_used=list(quotes.keys()),
     )
