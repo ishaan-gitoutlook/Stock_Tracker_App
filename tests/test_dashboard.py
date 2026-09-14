@@ -11,9 +11,14 @@ class TestTickerUniverses(unittest.TestCase):
     """Verify the curated market universes exposed by the dashboard."""
 
     def test_expected_market_universes_are_available(self):
-        self.assertEqual(set(MARKET_UNIVERSES), {"NIFTY 500", "Fortune 500"})
+        self.assertTrue({"NIFTY 500", "Fortune 500"}.issubset(set(MARKET_UNIVERSES)))
         self.assertTrue(MARKET_UNIVERSES["NIFTY 500"])
         self.assertTrue(MARKET_UNIVERSES["Fortune 500"])
+        self.assertIn("NASDAQ 100", MARKET_UNIVERSES)
+        self.assertIn("BSE Sensex 30", MARKET_UNIVERSES)
+        self.assertIn("FTSE 100 (UK)", MARKET_UNIVERSES)
+        self.assertIn("DAX 40 (Germany)", MARKET_UNIVERSES)
+        self.assertIn("Global Megacaps", MARKET_UNIVERSES)
 
     def test_universe_symbols_are_non_empty_and_unique(self):
         for symbols in MARKET_UNIVERSES.values():
