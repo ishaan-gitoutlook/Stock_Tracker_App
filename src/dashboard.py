@@ -60,13 +60,32 @@ def get_currency_symbol(currency_code: str) -> str:
     return currency_map.get(currency_code.upper(), currency_code)
 
 
+def on_main_radio_change() -> None:
+    """Synchronize listing state when user clicks on main screen radio selector."""
+    chosen_label = st.session_state.get("main_listing_radio")
+    if chosen_label:
+        universe = LABEL_TO_UNIVERSE.get(chosen_label, "NIFTY 500")
+        st.session_state.active_universe = universe
+        target_label = LISTING_DISPLAY_LABELS.get(universe, universe)
+        st.session_state.sidebar_listing_select = target_label
+
+
+def on_sidebar_select_change() -> None:
+    """Synchronize listing state when user selects from sidebar dropdown."""
+    chosen_label = st.session_state.get("sidebar_listing_select")
+    if chosen_label:
+        universe = LABEL_TO_UNIVERSE.get(chosen_label, "NIFTY 500")
+        st.session_state.active_universe = universe
+        target_label = LISTING_DISPLAY_LABELS.get(universe, universe)
+        st.session_state.main_listing_radio = target_label
+
+
 def render_sidebar() -> Tuple[str, List[str]]:
     """Render sidebar filters, stock listing selection, and custom ticker form."""
     if "available_symbols" not in st.session_state:
         st.session_state.available_symbols = list(DEFAULT_SYMBOLS)
 
-    if "active_universe" not in st.session_state:
-        st.session_state.active_universe = "Fortune 500"
+    active_universe = st.session_state.get("active_universe", "NIFTY 500")
 
     with st.sidebar:
         st.markdown(
@@ -113,72 +132,68 @@ def render_sidebar() -> Tuple[str, List[str]]:
         # Build options for stock listings
         universe_keys = list(MARKET_UNIVERSES.keys()) + ["My Watchlist"]
         listing_options = [
-            LISTING_DISPLAY_LABELS.get(k, k) if k != "My Watchlist" else "⭐ My Custom Watchlist"
-            for k in universe_keys
+            LISTING_DISPLAY_LABELS.get(k, k) for k in universe_keys
         ]
 
-        current_active = st.session_state.get("active_universe", "Fortune 500")
-        current_active_label = (
-            LISTING_DISPLAY_LABELS.get(current_active, current_active)
-            if current_active != "My Watchlist"
-            else "⭐ My Custom Watchlist"
-        )
-        try:
-            active_idx = listing_options.index(current_active_label)
-        except ValueError:
-            active_idx = 0
+        expected_sidebar_label = LISTING_DISPLAY_LABELS.get(active_universe, listing_options[0])
+        if st.session_state.get("sidebar_listing_select") != expected_sidebar_label:
+            st.session_state.sidebar_listing_select = expected_sidebar_label
 
-        selected_label = st.selectbox(
+        st.selectbox(
             "Select Market Listing",
             options=listing_options,
-            index=active_idx,
-            help="Switch between US, Indian (NSE/BSE), UK, German, or Global Megacap listings.",
             key="sidebar_listing_select",
+            on_change=on_sidebar_select_change,
+            help="Switch between Indian (NSE/BSE), US (S&P/NASDAQ), UK, German, or Global Megacap listings.",
         )
 
-        # Resolve selected label back to key
-        if selected_label == "⭐ My Custom Watchlist":
-            selected_universe = "My Watchlist"
-        else:
-            selected_universe = LABEL_TO_UNIVERSE.get(selected_label, selected_label)
-
-        st.session_state.active_universe = selected_universe
+        # Re-fetch active universe in case callback ran
+        active_universe = st.session_state.get("active_universe", "NIFTY 500")
 
         # Get constituent ticker options for chosen listing
         ticker_options = get_ticker_options(
-            selected_universe, st.session_state.available_symbols
+            active_universe, st.session_state.available_symbols
         )
 
         # Quick preset selection buttons
         col_p1, col_p2, col_p3 = st.columns(3)
         with col_p1:
             if st.button("Top 4", use_container_width=True, help="Track first 4 stocks in listing"):
-                st.session_state[f"tracked_{selected_universe}"] = ticker_options[:4]
+                st.session_state[f"tracked_{active_universe}"] = ticker_options[:4]
+                st.session_state[f"multiselect_{active_universe}"] = ticker_options[:4]
                 st.rerun()
         with col_p2:
             if st.button("Top 8", use_container_width=True, help="Track first 8 stocks in listing"):
-                st.session_state[f"tracked_{selected_universe}"] = ticker_options[:8]
+                st.session_state[f"tracked_{active_universe}"] = ticker_options[:8]
+                st.session_state[f"multiselect_{active_universe}"] = ticker_options[:8]
                 st.rerun()
         with col_p3:
             if st.button("All", use_container_width=True, help="Track all stocks in listing"):
-                st.session_state[f"tracked_{selected_universe}"] = ticker_options[:]
+                st.session_state[f"tracked_{active_universe}"] = ticker_options[:]
+                st.session_state[f"multiselect_{active_universe}"] = ticker_options[:]
                 st.rerun()
 
-        default_selection = st.session_state.get(
-            f"tracked_{selected_universe}", ticker_options[:min(4, len(ticker_options))]
-        )
-        # Ensure default items are valid in current ticker options
-        valid_defaults = [s for s in default_selection if s in ticker_options]
+        # Initialize defaults for this specific listing
+        if f"tracked_{active_universe}" not in st.session_state:
+            st.session_state[f"tracked_{active_universe}"] = ticker_options[:min(4, len(ticker_options))]
+
+        # Ensure valid defaults
+        valid_defaults = [
+            s for s in st.session_state[f"tracked_{active_universe}"] if s in ticker_options
+        ]
         if not valid_defaults and ticker_options:
             valid_defaults = ticker_options[:min(4, len(ticker_options))]
+            st.session_state[f"tracked_{active_universe}"] = valid_defaults
+
+        if f"multiselect_{active_universe}" not in st.session_state:
+            st.session_state[f"multiselect_{active_universe}"] = valid_defaults
 
         selected_symbols: List[str] = st.multiselect(
             "Constituent Stocks to Track",
             options=ticker_options,
-            default=valid_defaults,
-            key=f"multiselect_{selected_universe}",
+            key=f"multiselect_{active_universe}",
         )
-        st.session_state[f"tracked_{selected_universe}"] = selected_symbols
+        st.session_state[f"tracked_{active_universe}"] = selected_symbols
 
         st.divider()
         st.subheader("Add Custom Symbol")
@@ -201,45 +216,51 @@ def render_sidebar() -> Tuple[str, List[str]]:
             st.rerun()
         st.caption("Auto-syncs live financial quotes from global exchanges.")
 
-    return selected_universe, selected_symbols
+    return active_universe, selected_symbols
 
 
-def render_live_market(selected_universe: str, selected_symbols: List[str]) -> None:
+def render_live_market(active_universe: str, selected_symbols: List[str]) -> None:
     """Render live market metrics, stock listing switcher, charts, and data overview."""
-    universe_label = (
-        LISTING_DISPLAY_LABELS.get(selected_universe, selected_universe)
-        if selected_universe != "My Watchlist"
-        else "⭐ My Custom Watchlist"
-    )
+    universe_label = LISTING_DISPLAY_LABELS.get(active_universe, active_universe)
 
-    # Top Listing Switcher Pills right on the page for instant access
+    # Top Listing Switcher Pills right on the page for instant 1-click access
     st.markdown("### 🌐 Global Stock Listings")
     all_keys = list(MARKET_UNIVERSES.keys()) + ["My Watchlist"]
-    display_pills = [
-        LISTING_DISPLAY_LABELS.get(k, k) if k != "My Watchlist" else "⭐ Custom Watchlist"
-        for k in all_keys
-    ]
+    display_pills = [LISTING_DISPLAY_LABELS.get(k, k) for k in all_keys]
 
-    current_idx = all_keys.index(selected_universe) if selected_universe in all_keys else 0
+    expected_main_label = LISTING_DISPLAY_LABELS.get(active_universe, display_pills[0])
+    if st.session_state.get("main_listing_radio") != expected_main_label:
+        st.session_state.main_listing_radio = expected_main_label
 
-    chosen_display = st.radio(
+    st.radio(
         "Select Stock Listing to View:",
         options=display_pills,
-        index=current_idx,
-        horizontal=True,
         key="main_listing_radio",
-        help="Quickly view stocks listed on US, Indian, UK, German, or Global exchanges.",
+        horizontal=True,
+        on_change=on_main_radio_change,
+        help="Click any listing to immediately view stocks from India, US, UK, Germany, or Global Megacaps.",
     )
 
-    chosen_key = (
-        "My Watchlist"
-        if chosen_display == "⭐ Custom Watchlist"
-        else LABEL_TO_UNIVERSE.get(chosen_display, chosen_display)
-    )
-
-    if chosen_key != selected_universe:
-        st.session_state.active_universe = chosen_key
-        st.rerun()
+    # Quick Constituent Preset Pills on main screen for convenience
+    ticker_options = get_ticker_options(active_universe, st.session_state.get("available_symbols", []))
+    q_col1, q_col2, q_col3, q_col4 = st.columns([1, 1, 1, 4])
+    with q_col1:
+        if st.button("Top 4 Stocks", key="main_top_4", help="View first 4 stocks in this listing"):
+            st.session_state[f"tracked_{active_universe}"] = ticker_options[:4]
+            st.session_state[f"multiselect_{active_universe}"] = ticker_options[:4]
+            st.rerun()
+    with q_col2:
+        if st.button("Top 8 Stocks", key="main_top_8", help="View first 8 stocks in this listing"):
+            st.session_state[f"tracked_{active_universe}"] = ticker_options[:8]
+            st.session_state[f"multiselect_{active_universe}"] = ticker_options[:8]
+            st.rerun()
+    with q_col3:
+        if st.button("All Stocks", key="main_all_stocks", help="View all stocks in this listing"):
+            st.session_state[f"tracked_{active_universe}"] = ticker_options[:]
+            st.session_state[f"multiselect_{active_universe}"] = ticker_options[:]
+            st.rerun()
+    with q_col4:
+        st.caption(f"Active Listing: **{universe_label}** · {len(selected_symbols)} of {len(ticker_options)} stocks active")
 
     if not selected_symbols:
         st.markdown(
@@ -260,7 +281,7 @@ def render_live_market(selected_universe: str, selected_symbols: List[str]) -> N
             """,
             unsafe_allow_html=True,
         )
-        st.info(f"No stocks currently selected in **{universe_label}**. Please choose stocks from the sidebar to start live tracking.")
+        st.info(f"No stocks currently selected in **{universe_label}**. Click 'Top 4 Stocks' above or select stocks in the sidebar to start live tracking.")
         return
 
     try:
@@ -281,7 +302,7 @@ def render_live_market(selected_universe: str, selected_symbols: List[str]) -> N
             <div class="hero-copy">
                 <div class="eyebrow"><span class="live-dot"></span> LIVE MARKET INTELLIGENCE</div>
                 <h1>{universe_label}</h1>
-                <p>Tracking live quotes and intraday performance across global listings.</p>
+                <p>Tracking live quotes and intraday performance across {universe_label}.</p>
             </div>
             <div class="hero-stats-row">
                 <div class="hero-stat-card">
@@ -400,7 +421,7 @@ def render_live_market(selected_universe: str, selected_symbols: List[str]) -> N
         st.download_button(
             "📥 Download Table CSV",
             data=csv_buffer.getvalue(),
-            file_name=f"{selected_universe.lower().replace(' ', '_')}_quotes.csv",
+            file_name=f"{active_universe.lower().replace(' ', '_')}_quotes.csv",
             mime="text/csv",
             use_container_width=True,
         )
@@ -549,35 +570,38 @@ def render_dashboard_app() -> None:
         initial_sidebar_state="expanded",
     )
 
-    # Initialize theme if not present
+    # Initialize session state variables if not present
     if "theme_mode" not in st.session_state:
         st.session_state.theme_mode = "Midnight Navy"
 
+    if "active_universe" not in st.session_state:
+        st.session_state.active_universe = "NIFTY 500"
+
+    initial_label = LISTING_DISPLAY_LABELS.get(
+        st.session_state.active_universe, LISTING_DISPLAY_LABELS["NIFTY 500"]
+    )
+    if "sidebar_listing_select" not in st.session_state:
+        st.session_state.sidebar_listing_select = initial_label
+    if "main_listing_radio" not in st.session_state:
+        st.session_state.main_listing_radio = initial_label
+
     # Render sidebar and get active listing and tracked symbols
-    selected_universe, selected_symbols = render_sidebar()
+    active_universe, selected_symbols = render_sidebar()
 
     # Apply active theme styling dynamically
     render_theme_styles(st.session_state.get("theme_mode", "Midnight Navy"))
 
-    # Top-level market tabs keep the three regions immediately discoverable.
-    tab_india, tab_us, tab_europe, tab_live = st.tabs([
-        "🇮🇳 India (NSE / BSE)",
-        "🇺🇸 United States (NYSE / NASDAQ)",
-        "🇪🇺 Europe",
-        "📈 Live Tracker",
+    # Top-level workspace navigation tabs
+    tab_live, tab_research = st.tabs([
+        "📈 Live Market Tracker & Listings",
+        "🔬 In-Depth Fundamentals Research",
     ])
 
-    with tab_india:
-        from src.research_ui import render_research_tab
-        render_research_tab("India")
-    with tab_us:
-        from src.research_ui import render_research_tab
-        render_research_tab("United States")
-    with tab_europe:
-        from src.research_ui import render_research_tab
-        render_research_tab("Europe")
     with tab_live:
-        render_live_market(selected_universe, selected_symbols)
+        render_live_market(active_universe, selected_symbols)
+
+    with tab_research:
+        render_research_dashboard()
 
     # Floating AI Assistant popover
     with st.popover(

@@ -41,18 +41,45 @@ MARKET_UNIVERSES: Dict[str, Tuple[str, ...]] = {
     ),
 }
 
-# Display labels with country flags and descriptive exchange tags
+# Display labels formatted cleanly to avoid Regional Indicator letter doubling on Windows
 LISTING_DISPLAY_LABELS: Dict[str, str] = {
-    "Fortune 500": "🇺🇸 US Fortune 500 / S&P 500",
-    "NASDAQ 100": "⚡ US NASDAQ 100 Tech",
-    "NIFTY 500": "🇮🇳 India NIFTY 500 (NSE)",
-    "BSE Sensex 30": "🏛️ India BSE Sensex 30",
-    "FTSE 100 (UK)": "🇬🇧 UK FTSE 100 (London LSE)",
-    "DAX 40 (Germany)": "🇩🇪 Germany DAX 40 (XETRA)",
+    "NIFTY 500": "🇮🇳 NIFTY 500 (India NSE)",
+    "Fortune 500": "🇺🇸 S&P 500 / Fortune 500 (US)",
+    "NASDAQ 100": "⚡ NASDAQ 100 (US Tech)",
+    "BSE Sensex 30": "🏛️ BSE Sensex 30 (India BSE)",
+    "FTSE 100 (UK)": "🇬🇧 FTSE 100 (UK London)",
+    "DAX 40 (Germany)": "🇩🇪 DAX 40 (Germany XETRA)",
     "Global Megacaps": "🌐 Global Megacaps",
+    "My Watchlist": "⭐ My Custom Watchlist",
 }
 
-LABEL_TO_UNIVERSE: Dict[str, str] = {v: k for k, v in LISTING_DISPLAY_LABELS.items()}
+# Complete bidirectional mapping with backwards compatibility for all label variants
+LABEL_TO_UNIVERSE: Dict[str, str] = {
+    **{v: k for k, v in LISTING_DISPLAY_LABELS.items()},
+    "🇮🇳 NIFTY 500 (India NSE)": "NIFTY 500",
+    "🇮🇳 India NIFTY 500 (NSE)": "NIFTY 500",
+    "NIFTY 500": "NIFTY 500",
+    "🇺🇸 S&P 500 / Fortune 500 (US)": "Fortune 500",
+    "🇺🇸 US Fortune 500 / S&P 500": "Fortune 500",
+    "Fortune 500": "Fortune 500",
+    "⚡ NASDAQ 100 (US Tech)": "NASDAQ 100",
+    "⚡ US NASDAQ 100 Tech": "NASDAQ 100",
+    "NASDAQ 100": "NASDAQ 100",
+    "🏛️ BSE Sensex 30 (India BSE)": "BSE Sensex 30",
+    "🏛️ India BSE Sensex 30": "BSE Sensex 30",
+    "BSE Sensex 30": "BSE Sensex 30",
+    "🇬🇧 FTSE 100 (UK London)": "FTSE 100 (UK)",
+    "🇬🇧 UK FTSE 100 (London LSE)": "FTSE 100 (UK)",
+    "FTSE 100 (UK)": "FTSE 100 (UK)",
+    "🇩🇪 DAX 40 (Germany XETRA)": "DAX 40 (Germany)",
+    "🇩🇪 Germany DAX 40 (XETRA)": "DAX 40 (Germany)",
+    "DAX 40 (Germany)": "DAX 40 (Germany)",
+    "🌐 Global Megacaps": "Global Megacaps",
+    "Global Megacaps": "Global Megacaps",
+    "⭐ My Custom Watchlist": "My Watchlist",
+    "⭐ Custom Watchlist": "My Watchlist",
+    "My Watchlist": "My Watchlist",
+}
 
 
 def get_ticker_options(selected_universe: str, available_symbols: List[str]) -> List[str]:
