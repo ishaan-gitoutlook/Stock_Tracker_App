@@ -64,185 +64,185 @@ class ThemeConfig:
 THEMES: Dict[str, ThemeConfig] = {
     "Midnight Navy": ThemeConfig(
         name="Midnight Navy",
-        display_name="🌙 Midnight Navy (Default Dark)",
+        display_name="🌙 Midnight Navy (Ergonomic Dark)",
         is_dark=True,
         page_bg="#0a0f1d",
-        page_gradient="radial-gradient(circle at 10% 0%, rgba(99, 102, 241, 0.18), transparent 45%), radial-gradient(circle at 90% 20%, rgba(6, 182, 212, 0.14), transparent 38%), #0a0f1d",
-        sidebar_bg="linear-gradient(180deg, #0f1629 0%, #0a0f1d 100%)",
-        sidebar_border="rgba(99, 102, 241, 0.22)",
-        surface_card="rgba(17, 25, 46, 0.78)",
-        card_border="rgba(99, 102, 241, 0.2)",
-        card_hover_border="rgba(99, 102, 241, 0.55)",
-        card_hover_shadow="0 14px 32px rgba(0, 0, 0, 0.45), 0 0 20px rgba(99, 102, 241, 0.22)",
-        card_shadow="0 6px 20px rgba(0, 0, 0, 0.28)",
-        text_primary="#f8fafc",
-        text_secondary="#94a3b8",
-        text_muted="#64748b",
+        page_gradient="radial-gradient(circle at 10% 0%, rgba(99, 102, 241, 0.16), transparent 45%), radial-gradient(circle at 90% 20%, rgba(6, 182, 212, 0.12), transparent 38%), #0a0f1d",
+        sidebar_bg="linear-gradient(180deg, #0e1526 0%, #0a0f1d 100%)",
+        sidebar_border="rgba(148, 163, 184, 0.22)",
+        surface_card="rgba(17, 26, 46, 0.94)",
+        card_border="rgba(148, 163, 184, 0.22)",
+        card_hover_border="rgba(129, 140, 248, 0.6)",
+        card_hover_shadow="0 12px 28px rgba(0, 0, 0, 0.42), 0 0 16px rgba(99, 102, 241, 0.2)",
+        card_shadow="0 4px 18px rgba(0, 0, 0, 0.3)",
+        text_primary="#ffffff",
+        text_secondary="#cbd5e1",
+        text_muted="#94a3b8",
         accent_primary="#6366f1",
         accent_secondary="#06b6d4",
         accent_gradient="linear-gradient(135deg, #6366f1, #06b6d4)",
-        hero_bg="linear-gradient(135deg, #111a36 0%, #1c2454 48%, #0d3b52 100%)",
-        hero_border="rgba(99, 102, 241, 0.32)",
+        hero_bg="linear-gradient(135deg, #131c38 0%, #1a2550 50%, #0e374d 100%)",
+        hero_border="rgba(129, 140, 248, 0.35)",
         hero_text="#ffffff",
-        hero_subtitle="#cbd5e1",
+        hero_subtitle="#e2e8f0",
         hero_eyebrow="#38bdf8",
-        input_bg="#0e162a",
-        input_border="rgba(99, 102, 241, 0.26)",
-        input_text="#f8fafc",
-        tag_bg="rgba(99, 102, 241, 0.22)",
-        tag_text="#c7d2fe",
+        input_bg="#10172a",
+        input_border="rgba(148, 163, 184, 0.32)",
+        input_text="#ffffff",
+        tag_bg="rgba(99, 102, 241, 0.26)",
+        tag_text="#e0e7ff",
         bullish_color="#10b981",
-        bullish_bg="rgba(16, 185, 129, 0.16)",
+        bullish_bg="rgba(16, 185, 129, 0.18)",
         bearish_color="#f43f5e",
-        bearish_bg="rgba(244, 63, 94, 0.16)",
+        bearish_bg="rgba(244, 63, 94, 0.18)",
         live_dot_color="#10b981",
         fab_gradient="linear-gradient(135deg, #6366f1, #06b6d4)",
         fab_shadow="0 8px 24px rgba(99, 102, 241, 0.42)",
     ),
     "Clean Light": ThemeConfig(
         name="Clean Light",
-        display_name="☀️ Clean Light (Default Light)",
+        display_name="☀️ Clean Light (Glare-Free Paper)",
         is_dark=False,
-        page_bg="#f8fafc",
-        page_gradient="radial-gradient(circle at 10% 0%, rgba(99, 102, 241, 0.08), transparent 42%), radial-gradient(circle at 95% 15%, rgba(14, 165, 233, 0.07), transparent 36%), #f8fafc",
-        sidebar_bg="linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%)",
-        sidebar_border="rgba(203, 213, 225, 0.85)",
-        surface_card="rgba(255, 255, 255, 0.88)",
-        card_border="rgba(226, 232, 240, 0.95)",
-        card_hover_border="rgba(99, 102, 241, 0.45)",
-        card_hover_shadow="0 14px 30px rgba(15, 23, 42, 0.09), 0 0 16px rgba(99, 102, 241, 0.12)",
-        card_shadow="0 4px 16px rgba(15, 23, 42, 0.05)",
+        page_bg="#f3f4f6",
+        page_gradient="radial-gradient(circle at 10% 0%, rgba(99, 102, 241, 0.05), transparent 42%), radial-gradient(circle at 95% 15%, rgba(14, 165, 233, 0.04), transparent 36%), #f3f4f6",
+        sidebar_bg="linear-gradient(180deg, #eaecef 0%, #f3f4f6 100%)",
+        sidebar_border="rgba(203, 213, 225, 0.95)",
+        surface_card="rgba(255, 255, 255, 0.95)",
+        card_border="rgba(218, 224, 233, 0.95)",
+        card_hover_border="rgba(79, 70, 229, 0.45)",
+        card_hover_shadow="0 10px 24px rgba(15, 23, 42, 0.07)",
+        card_shadow="0 2px 10px rgba(15, 23, 42, 0.04)",
         text_primary="#0f172a",
-        text_secondary="#475569",
-        text_muted="#94a3b8",
+        text_secondary="#334155",
+        text_muted="#64748b",
         accent_primary="#4f46e5",
         accent_secondary="#0284c7",
         accent_gradient="linear-gradient(135deg, #4f46e5, #0284c7)",
-        hero_bg="linear-gradient(135deg, #1e293b 0%, #0f172a 60%, #1e1b4b 100%)",
-        hero_border="rgba(255, 255, 255, 0.15)",
+        hero_bg="linear-gradient(135deg, #243048 0%, #1e293b 60%, #1a2234 100%)",
+        hero_border="rgba(255, 255, 255, 0.16)",
         hero_text="#ffffff",
-        hero_subtitle="#cbd5e1",
+        hero_subtitle="#e2e8f0",
         hero_eyebrow="#38bdf8",
         input_bg="#ffffff",
         input_border="rgba(203, 213, 225, 0.95)",
         input_text="#0f172a",
-        tag_bg="rgba(99, 102, 241, 0.12)",
-        tag_text="#4338ca",
-        bullish_color="#059669",
-        bullish_bg="rgba(16, 185, 129, 0.12)",
-        bearish_color="#e11d48",
-        bearish_bg="rgba(225, 29, 72, 0.12)",
+        tag_bg="rgba(79, 70, 229, 0.12)",
+        tag_text="#3730a3",
+        bullish_color="#047857",
+        bullish_bg="rgba(16, 185, 129, 0.14)",
+        bearish_color="#be123c",
+        bearish_bg="rgba(225, 29, 72, 0.14)",
         live_dot_color="#10b981",
         fab_gradient="linear-gradient(135deg, #4f46e5, #0ea5e9)",
         fab_shadow="0 8px 24px rgba(79, 70, 229, 0.35)",
     ),
     "Obsidian Noir": ThemeConfig(
         name="Obsidian Noir",
-        display_name="🖤 Obsidian Noir (OLED Dark)",
+        display_name="🖤 Obsidian Noir (OLED Sharp)",
         is_dark=True,
-        page_bg="#050608",
-        page_gradient="radial-gradient(circle at 12% 0%, rgba(168, 85, 247, 0.14), transparent 45%), radial-gradient(circle at 88% 22%, rgba(236, 72, 153, 0.1), transparent 40%), #050608",
-        sidebar_bg="linear-gradient(180deg, #0a0b10 0%, #050608 100%)",
-        sidebar_border="rgba(255, 255, 255, 0.09)",
-        surface_card="rgba(18, 19, 28, 0.82)",
-        card_border="rgba(255, 255, 255, 0.08)",
-        card_hover_border="rgba(168, 85, 247, 0.5)",
-        card_hover_shadow="0 14px 34px rgba(0, 0, 0, 0.7), 0 0 20px rgba(168, 85, 247, 0.22)",
-        card_shadow="0 6px 20px rgba(0, 0, 0, 0.55)",
+        page_bg="#08090d",
+        page_gradient="radial-gradient(circle at 12% 0%, rgba(168, 85, 247, 0.14), transparent 45%), radial-gradient(circle at 88% 22%, rgba(236, 72, 153, 0.09), transparent 40%), #08090d",
+        sidebar_bg="linear-gradient(180deg, #10121a 0%, #08090d 100%)",
+        sidebar_border="rgba(255, 255, 255, 0.14)",
+        surface_card="rgba(20, 22, 32, 0.94)",
+        card_border="rgba(255, 255, 255, 0.12)",
+        card_hover_border="rgba(168, 85, 247, 0.55)",
+        card_hover_shadow="0 14px 34px rgba(0, 0, 0, 0.65), 0 0 20px rgba(168, 85, 247, 0.22)",
+        card_shadow="0 6px 20px rgba(0, 0, 0, 0.45)",
         text_primary="#ffffff",
-        text_secondary="#a1a1aa",
-        text_muted="#71717a",
+        text_secondary="#e2e8f0",
+        text_muted="#a1a1aa",
         accent_primary="#a855f7",
         accent_secondary="#ec4899",
         accent_gradient="linear-gradient(135deg, #a855f7, #ec4899)",
-        hero_bg="linear-gradient(135deg, #120f1b 0%, #1f122d 52%, #140b24 100%)",
+        hero_bg="linear-gradient(135deg, #181424 0%, #251636 52%, #1b0f30 100%)",
         hero_border="rgba(168, 85, 247, 0.35)",
         hero_text="#ffffff",
-        hero_subtitle="#d4d4d8",
+        hero_subtitle="#e4e4e7",
         hero_eyebrow="#c084fc",
-        input_bg="#111219",
-        input_border="rgba(255, 255, 255, 0.14)",
+        input_bg="#141620",
+        input_border="rgba(255, 255, 255, 0.18)",
         input_text="#ffffff",
-        tag_bg="rgba(168, 85, 247, 0.2)",
-        tag_text="#e9d5ff",
+        tag_bg="rgba(168, 85, 247, 0.22)",
+        tag_text="#f3e8ff",
         bullish_color="#34d399",
-        bullish_bg="rgba(52, 211, 153, 0.16)",
+        bullish_bg="rgba(52, 211, 153, 0.18)",
         bearish_color="#fb7185",
-        bearish_bg="rgba(251, 113, 133, 0.16)",
+        bearish_bg="rgba(251, 113, 133, 0.18)",
         live_dot_color="#a855f7",
         fab_gradient="linear-gradient(135deg, #a855f7, #ec4899)",
         fab_shadow="0 8px 24px rgba(168, 85, 247, 0.45)",
     ),
     "Emerald Wealth": ThemeConfig(
         name="Emerald Wealth",
-        display_name="🌲 Emerald Wealth (Fintech Green)",
+        display_name="🌲 Emerald Wealth (Calm Pine)",
         is_dark=True,
-        page_bg="#03120b",
-        page_gradient="radial-gradient(circle at 10% 0%, rgba(16, 185, 129, 0.16), transparent 45%), radial-gradient(circle at 90% 25%, rgba(245, 158, 11, 0.11), transparent 38%), #03120b",
-        sidebar_bg="linear-gradient(180deg, #061a11 0%, #03120b 100%)",
-        sidebar_border="rgba(16, 185, 129, 0.22)",
-        surface_card="rgba(8, 29, 21, 0.78)",
-        card_border="rgba(16, 185, 129, 0.2)",
-        card_hover_border="rgba(16, 185, 129, 0.55)",
-        card_hover_shadow="0 14px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(16, 185, 129, 0.22)",
-        card_shadow="0 6px 20px rgba(0, 0, 0, 0.32)",
-        text_primary="#f0fdf4",
-        text_secondary="#86efac",
-        text_muted="#4ade80",
+        page_bg="#05130b",
+        page_gradient="radial-gradient(circle at 10% 0%, rgba(16, 185, 129, 0.15), transparent 45%), radial-gradient(circle at 90% 25%, rgba(245, 158, 11, 0.09), transparent 38%), #05130b",
+        sidebar_bg="linear-gradient(180deg, #091e13 0%, #05130b 100%)",
+        sidebar_border="rgba(16, 185, 129, 0.25)",
+        surface_card="rgba(12, 32, 22, 0.94)",
+        card_border="rgba(16, 185, 129, 0.24)",
+        card_hover_border="rgba(16, 185, 129, 0.6)",
+        card_hover_shadow="0 14px 32px rgba(0, 0, 0, 0.45), 0 0 18px rgba(16, 185, 129, 0.2)",
+        card_shadow="0 6px 20px rgba(0, 0, 0, 0.3)",
+        text_primary="#ffffff",
+        text_secondary="#d1fae5",
+        text_muted="#86efac",
         accent_primary="#10b981",
         accent_secondary="#f59e0b",
         accent_gradient="linear-gradient(135deg, #10b981, #059669)",
-        hero_bg="linear-gradient(135deg, #062419 0%, #0a3828 50%, #124b35 100%)",
-        hero_border="rgba(16, 185, 129, 0.36)",
+        hero_bg="linear-gradient(135deg, #0a2c1f 0%, #0f4431 50%, #13553c 100%)",
+        hero_border="rgba(16, 185, 129, 0.4)",
         hero_text="#ffffff",
-        hero_subtitle="#bbf7d0",
+        hero_subtitle="#d1fae5",
         hero_eyebrow="#6ee7b7",
-        input_bg="#061c13",
-        input_border="rgba(16, 185, 129, 0.26)",
+        input_bg="#0a2317",
+        input_border="rgba(16, 185, 129, 0.32)",
         input_text="#f0fdf4",
-        tag_bg="rgba(16, 185, 129, 0.22)",
-        tag_text="#a7f3d0",
+        tag_bg="rgba(16, 185, 129, 0.24)",
+        tag_text="#d1fae5",
         bullish_color="#34d399",
-        bullish_bg="rgba(52, 211, 153, 0.16)",
+        bullish_bg="rgba(52, 211, 153, 0.18)",
         bearish_color="#f87171",
-        bearish_bg="rgba(248, 113, 113, 0.16)",
+        bearish_bg="rgba(248, 113, 113, 0.18)",
         live_dot_color="#34d399",
         fab_gradient="linear-gradient(135deg, #10b981, #059669)",
         fab_shadow="0 8px 24px rgba(16, 185, 129, 0.42)",
     ),
     "Cyber Terminal": ThemeConfig(
         name="Cyber Terminal",
-        display_name="⚡ Cyber Terminal (Matrix / Neon)",
+        display_name="⚡ Cyber Terminal (Contrast Neon)",
         is_dark=True,
-        page_bg="#050a10",
-        page_gradient="radial-gradient(circle at 10% 0%, rgba(0, 255, 163, 0.13), transparent 42%), radial-gradient(circle at 90% 20%, rgba(0, 229, 255, 0.13), transparent 38%), #050a10",
-        sidebar_bg="linear-gradient(180deg, #09131d 0%, #050a10 100%)",
-        sidebar_border="rgba(0, 229, 255, 0.22)",
-        surface_card="rgba(10, 20, 30, 0.78)",
-        card_border="rgba(0, 229, 255, 0.19)",
-        card_hover_border="rgba(0, 255, 163, 0.55)",
-        card_hover_shadow="0 14px 34px rgba(0, 0, 0, 0.55), 0 0 22px rgba(0, 255, 163, 0.26)",
-        card_shadow="0 6px 20px rgba(0, 0, 0, 0.38)",
-        text_primary="#e0f2fe",
-        text_secondary="#7dd3fc",
-        text_muted="#38bdf8",
+        page_bg="#060d15",
+        page_gradient="radial-gradient(circle at 10% 0%, rgba(0, 255, 163, 0.12), transparent 42%), radial-gradient(circle at 90% 20%, rgba(0, 229, 255, 0.12), transparent 38%), #060d15",
+        sidebar_bg="linear-gradient(180deg, #0a1622 0%, #060d15 100%)",
+        sidebar_border="rgba(0, 229, 255, 0.25)",
+        surface_card="rgba(13, 26, 38, 0.94)",
+        card_border="rgba(0, 229, 255, 0.22)",
+        card_hover_border="rgba(0, 255, 163, 0.6)",
+        card_hover_shadow="0 14px 34px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 163, 0.24)",
+        card_shadow="0 6px 20px rgba(0, 0, 0, 0.35)",
+        text_primary="#ffffff",
+        text_secondary="#e0f2fe",
+        text_muted="#7dd3fc",
         accent_primary="#00ffa3",
         accent_secondary="#00e5ff",
         accent_gradient="linear-gradient(135deg, #00ffa3, #00e5ff)",
-        hero_bg="linear-gradient(135deg, #081822 0%, #072a34 52%, #043c40 100%)",
-        hero_border="rgba(0, 229, 255, 0.36)",
+        hero_bg="linear-gradient(135deg, #0c212e 0%, #0c3845 52%, #084c52 100%)",
+        hero_border="rgba(0, 229, 255, 0.4)",
         hero_text="#ffffff",
-        hero_subtitle="#bae6fd",
+        hero_subtitle="#e0f2fe",
         hero_eyebrow="#00ffa3",
-        input_bg="#08141f",
-        input_border="rgba(0, 229, 255, 0.26)",
-        input_text="#e0f2fe",
-        tag_bg="rgba(0, 229, 255, 0.16)",
-        tag_text="#7dd3fc",
+        input_bg="#0d1b28",
+        input_border="rgba(0, 229, 255, 0.32)",
+        input_text="#f0f9ff",
+        tag_bg="rgba(0, 229, 255, 0.2)",
+        tag_text="#bae6fd",
         bullish_color="#00ffa3",
-        bullish_bg="rgba(0, 255, 163, 0.16)",
+        bullish_bg="rgba(0, 255, 163, 0.18)",
         bearish_color="#ff3366",
-        bearish_bg="rgba(255, 51, 102, 0.16)",
+        bearish_bg="rgba(255, 51, 102, 0.18)",
         live_dot_color="#00ffa3",
         fab_gradient="linear-gradient(135deg, #00ffa3, #00e5ff)",
         fab_shadow="0 8px 24px rgba(0, 229, 255, 0.46)",
@@ -251,72 +251,72 @@ THEMES: Dict[str, ThemeConfig] = {
         name="Sunset Horizon",
         display_name="🌅 Sunset Horizon (Warm Twilight)",
         is_dark=True,
-        page_bg="#100b1a",
-        page_gradient="radial-gradient(circle at 10% 0%, rgba(244, 63, 94, 0.15), transparent 42%), radial-gradient(circle at 90% 25%, rgba(245, 158, 11, 0.13), transparent 38%), #100b1a",
-        sidebar_bg="linear-gradient(180deg, #181028 0%, #100b1a 100%)",
-        sidebar_border="rgba(244, 63, 94, 0.22)",
-        surface_card="rgba(28, 19, 46, 0.78)",
-        card_border="rgba(244, 63, 94, 0.2)",
-        card_hover_border="rgba(244, 63, 94, 0.55)",
-        card_hover_shadow="0 14px 34px rgba(0, 0, 0, 0.52), 0 0 22px rgba(244, 63, 94, 0.26)",
-        card_shadow="0 6px 20px rgba(0, 0, 0, 0.36)",
-        text_primary="#fff1f2",
-        text_secondary="#fda4af",
-        text_muted="#f43f5e",
+        page_bg="#120c1a",
+        page_gradient="radial-gradient(circle at 10% 0%, rgba(244, 63, 94, 0.13), transparent 42%), radial-gradient(circle at 90% 25%, rgba(245, 158, 11, 0.1), transparent 38%), #120c1a",
+        sidebar_bg="linear-gradient(180deg, #1b1226 0%, #120c1a 100%)",
+        sidebar_border="rgba(244, 63, 94, 0.25)",
+        surface_card="rgba(32, 22, 48, 0.94)",
+        card_border="rgba(244, 63, 94, 0.24)",
+        card_hover_border="rgba(244, 63, 94, 0.6)",
+        card_hover_shadow="0 14px 34px rgba(0, 0, 0, 0.48), 0 0 20px rgba(244, 63, 94, 0.24)",
+        card_shadow="0 6px 20px rgba(0, 0, 0, 0.32)",
+        text_primary="#ffffff",
+        text_secondary="#ffe4e6",
+        text_muted="#fca5a5",
         accent_primary="#f43f5e",
         accent_secondary="#f59e0b",
         accent_gradient="linear-gradient(135deg, #f43f5e, #f59e0b)",
-        hero_bg="linear-gradient(135deg, #281338 0%, #3f153b 50%, #521832 100%)",
-        hero_border="rgba(244, 63, 94, 0.36)",
+        hero_bg="linear-gradient(135deg, #321746 0%, #4a1946 50%, #5e1c3b 100%)",
+        hero_border="rgba(244, 63, 94, 0.4)",
         hero_text="#ffffff",
-        hero_subtitle="#fecdd3",
+        hero_subtitle="#ffe4e6",
         hero_eyebrow="#fb7185",
-        input_bg="#19102a",
-        input_border="rgba(244, 63, 94, 0.26)",
+        input_bg="#211534",
+        input_border="rgba(244, 63, 94, 0.32)",
         input_text="#fff1f2",
-        tag_bg="rgba(244, 63, 94, 0.2)",
-        tag_text="#fda4af",
+        tag_bg="rgba(244, 63, 94, 0.24)",
+        tag_text="#ffe4e6",
         bullish_color="#34d399",
-        bullish_bg="rgba(52, 211, 153, 0.16)",
+        bullish_bg="rgba(52, 211, 153, 0.18)",
         bearish_color="#f43f5e",
-        bearish_bg="rgba(244, 63, 94, 0.16)",
+        bearish_bg="rgba(244, 63, 94, 0.18)",
         live_dot_color="#f59e0b",
         fab_gradient="linear-gradient(135deg, #f43f5e, #f59e0b)",
         fab_shadow="0 8px 24px rgba(244, 63, 94, 0.46)",
     ),
     "Arctic Frost": ThemeConfig(
         name="Arctic Frost",
-        display_name="❄️ Arctic Frost (Cool Crisp Light)",
+        display_name="❄️ Arctic Frost (Nordic Mist)",
         is_dark=False,
-        page_bg="#f1f5f9",
-        page_gradient="radial-gradient(circle at 10% 0%, rgba(6, 182, 212, 0.11), transparent 45%), radial-gradient(circle at 90% 20%, rgba(59, 130, 246, 0.09), transparent 38%), #f1f5f9",
-        sidebar_bg="linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%)",
-        sidebar_border="rgba(148, 163, 184, 0.45)",
-        surface_card="rgba(255, 255, 255, 0.92)",
-        card_border="rgba(203, 213, 225, 0.85)",
-        card_hover_border="rgba(6, 182, 212, 0.52)",
-        card_hover_shadow="0 14px 30px rgba(15, 23, 42, 0.09), 0 0 16px rgba(6, 182, 212, 0.16)",
-        card_shadow="0 4px 16px rgba(15, 23, 42, 0.05)",
+        page_bg="#edf1f5",
+        page_gradient="radial-gradient(circle at 10% 0%, rgba(6, 182, 212, 0.06), transparent 45%), radial-gradient(circle at 90% 20%, rgba(59, 130, 246, 0.05), transparent 38%), #edf1f5",
+        sidebar_bg="linear-gradient(180deg, #e4e9ef 0%, #edf1f5 100%)",
+        sidebar_border="rgba(203, 213, 225, 0.95)",
+        surface_card="rgba(255, 255, 255, 0.95)",
+        card_border="rgba(214, 222, 232, 0.95)",
+        card_hover_border="rgba(6, 182, 212, 0.55)",
+        card_hover_shadow="0 10px 24px rgba(15, 23, 42, 0.08)",
+        card_shadow="0 2px 10px rgba(15, 23, 42, 0.04)",
         text_primary="#0f172a",
         text_secondary="#334155",
         text_muted="#64748b",
         accent_primary="#0284c7",
         accent_secondary="#0d9488",
         accent_gradient="linear-gradient(135deg, #0284c7, #0d9488)",
-        hero_bg="linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0369a1 100%)",
+        hero_bg="linear-gradient(135deg, #1e2d42 0%, #152234 60%, #0a3d54 100%)",
         hero_border="rgba(255, 255, 255, 0.18)",
         hero_text="#ffffff",
         hero_subtitle="#e2e8f0",
         hero_eyebrow="#38bdf8",
         input_bg="#ffffff",
-        input_border="rgba(203, 213, 225, 0.85)",
+        input_border="rgba(203, 213, 225, 0.95)",
         input_text="#0f172a",
         tag_bg="rgba(2, 132, 199, 0.13)",
         tag_text="#0369a1",
-        bullish_color="#059669",
-        bullish_bg="rgba(16, 185, 129, 0.12)",
-        bearish_color="#e11d48",
-        bearish_bg="rgba(225, 29, 72, 0.12)",
+        bullish_color="#047857",
+        bullish_bg="rgba(16, 185, 129, 0.14)",
+        bearish_color="#be123c",
+        bearish_bg="rgba(225, 29, 72, 0.14)",
         live_dot_color="#0284c7",
         fab_gradient="linear-gradient(135deg, #0284c7, #0d9488)",
         fab_shadow="0 8px 24px rgba(2, 132, 199, 0.35)",
@@ -354,12 +354,12 @@ def resolve_theme(theme_identifier: Optional[str]) -> ThemeConfig:
 
 
 def build_theme_css(theme_input: str) -> str:
-    """Generate cohesive, modern, and polished CSS for the dashboard."""
+    """Generate cohesive, high-contrast, glare-free, and eye-friendly CSS for the dashboard."""
     t = resolve_theme(theme_input)
 
     return f"""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
     :root {{
         --ui-page: {t.page_bg};
@@ -399,11 +399,13 @@ def build_theme_css(theme_input: str) -> str:
     /* Global typography & layout */
     html, body, [class*="css"] {{
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
     }}
 
     .block-container {{
         max-width: 1440px !important;
-        padding-top: 2rem !important;
+        padding-top: 1.8rem !important;
         padding-bottom: 5rem !important;
         padding-left: 2rem !important;
         padding-right: 2rem !important;
@@ -419,11 +421,27 @@ def build_theme_css(theme_input: str) -> str:
         background: transparent !important;
     }}
 
-    /* Sidebar styling */
+    /* Universal typography overrides for absolute clarity */
+    h1, h2, h3, h4, h5, h6 {{
+        color: var(--ui-text-primary) !important;
+        font-weight: 750 !important;
+    }}
+
+    p, span, label {{
+        color: inherit;
+    }}
+
+    .stMarkdown p {{
+        color: var(--ui-text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.55;
+    }}
+
+    /* Sidebar styling with high contrast readability */
     section[data-testid="stSidebar"] {{
         background: var(--ui-sidebar) !important;
         border-right: 1px solid var(--ui-sidebar-border) !important;
-        backdrop-filter: blur(12px);
+        backdrop-filter: blur(14px);
     }}
 
     section[data-testid="stSidebar"] * {{
@@ -432,12 +450,15 @@ def build_theme_css(theme_input: str) -> str:
 
     section[data-testid="stSidebar"] .stMarkdown p,
     section[data-testid="stSidebar"] label {{
-        color: var(--ui-text-secondary) !important;
-        font-weight: 500 !important;
+        color: var(--ui-text-primary) !important;
+        font-weight: 600 !important;
+        font-size: 0.92rem !important;
     }}
 
-    section[data-testid="stSidebar"] [data-testid="stCaptionContainer"] * {{
-        color: var(--ui-text-muted) !important;
+    section[data-testid="stSidebar"] [data-testid="stCaptionContainer"] *,
+    section[data-testid="stSidebar"] .stCaption {{
+        color: var(--ui-text-secondary) !important;
+        font-size: 0.82rem !important;
     }}
 
     /* Brand Header */
@@ -471,32 +492,32 @@ def build_theme_css(theme_input: str) -> str:
 
     .brand-name {{
         color: var(--ui-text-primary) !important;
-        font-size: 1.2rem;
+        font-size: 1.25rem;
         font-weight: 800;
         letter-spacing: -0.03em;
         line-height: 1.2;
     }}
 
     .brand-caption {{
-        color: var(--ui-text-muted) !important;
-        font-size: 0.58rem;
-        font-weight: 700;
-        letter-spacing: 0.14em;
+        color: var(--ui-text-secondary) !important;
+        font-size: 0.65rem;
+        font-weight: 750;
+        letter-spacing: 0.12em;
         text-transform: uppercase;
     }}
 
-    /* Hero Panel */
+    /* Hero Panel with gentle eye-friendly contrast */
     .hero-panel {{
         display: flex;
         align-items: flex-end;
         justify-content: space-between;
         gap: 2rem;
-        margin-bottom: 2rem;
-        padding: 2.2rem 2.5rem;
+        margin-bottom: 1.75rem;
+        padding: 2rem 2.25rem;
         border: 1px solid var(--ui-hero-border);
-        border-radius: 1.5rem;
+        border-radius: 1.4rem;
         background: var(--ui-hero-bg);
-        box-shadow: 0 1.25rem 3rem rgba(0, 0, 0, 0.28);
+        box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.25);
         overflow: hidden;
         position: relative;
     }}
@@ -509,7 +530,7 @@ def build_theme_css(theme_input: str) -> str:
         right: -5rem;
         top: -9rem;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(255, 255, 255, 0.15), transparent 70%);
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.12), transparent 70%);
         pointer-events: none;
     }}
 
@@ -519,10 +540,10 @@ def build_theme_css(theme_input: str) -> str:
     }}
 
     .hero-copy h1 {{
-        margin: 0.25rem 0 0.5rem 0 !important;
-        font-size: clamp(2rem, 3.8vw, 3.4rem) !important;
+        margin: 0.2rem 0 0.45rem 0 !important;
+        font-size: clamp(1.8rem, 3.2vw, 2.8rem) !important;
         font-weight: 800 !important;
-        letter-spacing: -0.05em !important;
+        letter-spacing: -0.04em !important;
         color: var(--ui-hero-text) !important;
         -webkit-text-fill-color: var(--ui-hero-text) !important;
         background: none !important;
@@ -531,8 +552,9 @@ def build_theme_css(theme_input: str) -> str:
     .hero-copy p {{
         margin: 0;
         color: var(--ui-hero-subtitle) !important;
-        font-size: 1.05rem;
-        font-weight: 400;
+        font-size: 1.02rem;
+        font-weight: 450;
+        line-height: 1.5;
     }}
 
     .eyebrow {{
@@ -557,12 +579,12 @@ def build_theme_css(theme_input: str) -> str:
 
     @keyframes live-pulse {{
         0%, 100% {{ transform: scale(1); opacity: 1; }}
-        50% {{ transform: scale(1.3); opacity: 0.65; }}
+        50% {{ transform: scale(1.3); opacity: 0.7; }}
     }}
 
     .hero-stats-row {{
         display: flex;
-        gap: 1rem;
+        gap: 0.85rem;
         position: relative;
         z-index: 1;
         flex-wrap: wrap;
@@ -570,17 +592,17 @@ def build_theme_css(theme_input: str) -> str:
 
     .hero-stat-card {{
         min-width: 8rem;
-        padding: 0.9rem 1.25rem;
-        border: 1px solid rgba(255, 255, 255, 0.16);
-        border-radius: 1rem;
-        background: rgba(255, 255, 255, 0.08);
+        padding: 0.85rem 1.15rem;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 0.95rem;
+        background: rgba(255, 255, 255, 0.09);
         backdrop-filter: blur(1rem);
         -webkit-backdrop-filter: blur(1rem);
     }}
 
     .hero-stat-card strong {{
         display: block;
-        font-size: 1.85rem;
+        font-size: 1.75rem;
         font-weight: 800;
         line-height: 1;
         color: #ffffff !important;
@@ -589,44 +611,89 @@ def build_theme_css(theme_input: str) -> str:
     .hero-stat-card span {{
         display: block;
         margin-top: 0.35rem;
-        color: rgba(255, 255, 255, 0.75) !important;
+        color: rgba(255, 255, 255, 0.85) !important;
         font-size: 0.76rem;
-        font-weight: 600;
+        font-weight: 650;
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }}
 
+    /* Global Stock Listings Radio Button / Pills styling */
+    [data-testid="stRadio"] label,
+    [data-testid="stRadio"] p,
+    [data-testid="stRadio"] span,
+    [data-testid="stRadio"] div {{
+        color: var(--ui-text-primary) !important;
+        font-weight: 600 !important;
+        font-size: 0.92rem !important;
+    }}
+
+    [data-testid="stRadio"] > div {{
+        gap: 0.55rem !important;
+        flex-wrap: wrap !important;
+    }}
+
+    [data-testid="stRadio"] label[data-baseweb="radio"] {{
+        background: var(--ui-surface-card) !important;
+        padding: 0.4rem 0.85rem !important;
+        border-radius: 0.75rem !important;
+        border: 1px solid var(--ui-card-border) !important;
+        transition: all 0.15s ease !important;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
+    }}
+
+    [data-testid="stRadio"] label[data-baseweb="radio"]:hover {{
+        border-color: var(--ui-accent-primary) !important;
+        transform: translateY(-1px) !important;
+    }}
+
+    /* Workspace Tabs with high contrast active state */
+    [data-testid="stTabs"] button {{
+        color: var(--ui-text-secondary) !important;
+        font-weight: 600 !important;
+        font-size: 0.96rem !important;
+        padding: 0.65rem 1.25rem !important;
+        transition: all 0.15s ease !important;
+    }}
+
+    [data-testid="stTabs"] button[aria-selected="true"] {{
+        color: var(--ui-text-primary) !important;
+        font-weight: 800 !important;
+        border-bottom: 3px solid var(--ui-accent-primary) !important;
+    }}
+
     /* Section Headings */
     .section-heading {{
-        margin: 1.5rem 0 1rem;
+        margin: 1.5rem 0 0.85rem;
     }}
 
     .overview-heading {{
-        margin-top: 2.5rem;
+        margin-top: 2.25rem;
     }}
 
     .section-kicker {{
-        font-size: 0.7rem;
+        font-size: 0.72rem;
         font-weight: 800;
-        letter-spacing: 0.15em;
+        letter-spacing: 0.14em;
         text-transform: uppercase;
-        color: var(--ui-accent-primary);
+        color: var(--ui-accent-primary) !important;
     }}
 
     .section-title {{
         margin-top: 0.15rem;
         color: var(--ui-text-primary) !important;
-        font-size: 1.6rem;
+        font-size: 1.5rem;
         font-weight: 800;
         letter-spacing: -0.03em;
     }}
 
     .section-subtitle {{
         color: var(--ui-text-secondary) !important;
-        font-size: 0.9rem;
+        font-size: 0.92rem;
+        font-weight: 500;
     }}
 
-    /* Stock Metric Cards */
+    /* Stock Metric Cards - Sharp & Crisp Typography */
     div[data-testid="stMetric"] {{
         background: var(--ui-surface-card) !important;
         backdrop-filter: blur(16px);
@@ -642,19 +709,19 @@ def build_theme_css(theme_input: str) -> str:
     }}
 
     div[data-testid="stMetric"]:hover {{
-        transform: translateY(-4px) !important;
+        transform: translateY(-3px) !important;
         border-color: var(--ui-card-hover-border) !important;
         box-shadow: var(--ui-card-hover-shadow) !important;
     }}
 
-    div[data-testid="stMetricLabel"] {{
+    div[data-testid="stMetricLabel"] * {{
         color: var(--ui-text-secondary) !important;
-        font-size: 0.85rem !important;
-        font-weight: 600 !important;
-        letter-spacing: 0.02em !important;
+        font-size: 0.9rem !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.01em !important;
     }}
 
-    div[data-testid="stMetricValue"] {{
+    div[data-testid="stMetricValue"] * {{
         color: var(--ui-text-primary) !important;
         font-size: 1.85rem !important;
         font-weight: 800 !important;
@@ -662,9 +729,9 @@ def build_theme_css(theme_input: str) -> str:
         font-family: 'JetBrains Mono', monospace, sans-serif !important;
     }}
 
-    div[data-testid="stMetricDelta"] {{
-        font-size: 0.85rem !important;
-        font-weight: 600 !important;
+    div[data-testid="stMetricDelta"] * {{
+        font-size: 0.88rem !important;
+        font-weight: 700 !important;
         font-family: 'JetBrains Mono', monospace, sans-serif !important;
     }}
 
@@ -686,6 +753,7 @@ def build_theme_css(theme_input: str) -> str:
         color: var(--ui-input-text) !important;
         border-color: var(--ui-input-border) !important;
         border-radius: 0.75rem !important;
+        font-weight: 500 !important;
     }}
 
     [data-baseweb="select"] *,
@@ -697,8 +765,9 @@ def build_theme_css(theme_input: str) -> str:
     [data-baseweb="tag"] {{
         background: var(--ui-tag-bg) !important;
         color: var(--ui-tag-text) !important;
+        border: 1px solid var(--ui-card-border) !important;
         border-radius: 0.5rem !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
     }}
 
     [data-baseweb="tag"] span {{
@@ -709,9 +778,9 @@ def build_theme_css(theme_input: str) -> str:
     [data-testid="stButton"] button,
     [data-testid="stFormSubmitButton"] button {{
         border-radius: 0.75rem !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
         transition: all 0.2s ease !important;
-        border-color: var(--ui-card-border) !important;
+        border: 1px solid var(--ui-card-border) !important;
         background: var(--ui-surface-card) !important;
         color: var(--ui-text-primary) !important;
     }}
@@ -767,7 +836,7 @@ def build_theme_css(theme_input: str) -> str:
 
     .st-key-assistant_launcher button[data-testid="stPopoverButton"]:hover,
     .st-key-assistant_launcher > div > button:hover {{
-        transform: scale(1.1) !important;
+        transform: scale(1.08) !important;
         box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45) !important;
     }}
 
@@ -842,7 +911,7 @@ def build_theme_css(theme_input: str) -> str:
         align-items: center;
         gap: 0.35rem;
         font-size: 0.72rem;
-        font-weight: 600;
+        font-weight: 650;
         color: var(--ui-bullish) !important;
     }}
 
@@ -864,21 +933,21 @@ def build_theme_css(theme_input: str) -> str:
         margin-bottom: 0.75rem;
         padding: 0.45rem 0.75rem;
         border-radius: 0.75rem;
-        background: rgba(255, 255, 255, 0.03);
+        background: rgba(255, 255, 255, 0.04);
         border: 1px solid var(--ui-card-border);
     }}
 
     .context-label {{
-        font-size: 0.65rem;
+        font-size: 0.68rem;
         font-weight: 800;
         letter-spacing: 0.1em;
         text-transform: uppercase;
-        color: var(--ui-text-muted) !important;
+        color: var(--ui-text-secondary) !important;
     }}
 
     .context-ticker {{
-        font-size: 0.68rem;
-        font-weight: 700;
+        font-size: 0.72rem;
+        font-weight: 750;
         letter-spacing: 0.04em;
         padding: 0.15rem 0.45rem;
         border-radius: 0.4rem;
@@ -886,35 +955,6 @@ def build_theme_css(theme_input: str) -> str:
         color: var(--ui-tag-text) !important;
         border: 1px solid var(--ui-card-border);
         font-family: 'JetBrains Mono', monospace, sans-serif;
-    }}
-
-    .chat-empty-card {{
-        padding: 1.25rem 1rem;
-        text-align: center;
-        border: 1px dashed var(--ui-card-border);
-        border-radius: 1rem;
-        background: rgba(255, 255, 255, 0.02);
-        margin: 0.4rem 0 0.85rem;
-    }}
-
-    .chat-empty-icon {{
-        font-size: 1.8rem;
-        margin-bottom: 0.35rem;
-    }}
-
-    .chat-empty-title {{
-        font-size: 0.95rem;
-        font-weight: 700;
-        color: var(--ui-text-primary);
-        margin-bottom: 0.2rem;
-    }}
-
-    .chat-empty-desc {{
-        font-size: 0.78rem;
-        color: var(--ui-text-secondary);
-        max-width: 320px;
-        margin: 0 auto;
-        line-height: 1.4;
     }}
 
     /* Chat Messages styling */
@@ -926,12 +966,15 @@ def build_theme_css(theme_input: str) -> str:
         margin-bottom: 0.65rem !important;
         color: var(--ui-text-primary) !important;
         backdrop-filter: blur(14px) !important;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
-        font-size: 0.9rem !important;
-        line-height: 1.5 !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
+        font-size: 0.92rem !important;
+        line-height: 1.55 !important;
     }}
 
-    /* Differentiate user and assistant bubbles */
+    [data-testid="stChatMessage"] p {{
+        color: var(--ui-text-primary) !important;
+    }}
+
     [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {{
         border-left: 3px solid var(--ui-accent-primary) !important;
         background: rgba(99, 102, 241, 0.08) !important;
@@ -946,9 +989,9 @@ def build_theme_css(theme_input: str) -> str:
         align-items: center;
         gap: 0.45rem;
         margin-top: 0.35rem;
-        font-size: 0.7rem;
-        color: var(--ui-text-muted) !important;
-        font-weight: 600;
+        font-size: 0.72rem;
+        color: var(--ui-text-secondary) !important;
+        font-weight: 650;
     }}
 
     /* Dock chat input cleanly inside popover */
@@ -970,14 +1013,16 @@ def build_theme_css(theme_input: str) -> str:
     [data-testid="stChatInput"] textarea {{
         background: var(--ui-input-bg) !important;
         color: var(--ui-input-text) !important;
+        font-size: 0.92rem !important;
     }}
 
     .chat-footer-disclaimer {{
-        font-size: 0.64rem;
-        color: var(--ui-text-muted) !important;
+        font-size: 0.68rem;
+        color: var(--ui-text-secondary) !important;
         text-align: center;
         margin-top: 0.45rem;
-        line-height: 1.3;
+        line-height: 1.35;
+        font-weight: 500;
     }}
 
     /* Responsive design */
