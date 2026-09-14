@@ -1,6 +1,7 @@
 ﻿"""Multi-market Streamlit research workspace."""
 import json
 import streamlit as st
+from src.api_client import APIClientError, configured_market_data_url, fetch_market_listings, search_market_instruments
 from src.research import EODHDProvider, ResearchProviderError, MARKET_EXCHANGES, Instrument
 
 
@@ -14,6 +15,8 @@ PROVIDER_EXCHANGES = {
 @st.cache_data(ttl=86400, show_spinner=False)
 def load_exchange_catalog(api_key: str, provider_exchange: str) -> list[Instrument]:
     """Cache a full active exchange catalog for the current provider key."""
+    if configured_market_data_url():
+        return fetch_market_listings(provider_exchange)
     return EODHDProvider(api_key=api_key).exchange_symbols(provider_exchange)
 
 def _symbol(item: Instrument) -> str:
@@ -25,8 +28,9 @@ def render_research_tab(market: str) -> None:
     st.subheader(market + ' market')
     st.caption('Supported exchanges: ' + ', '.join(MARKET_EXCHANGES[market]) + ' · Data is delayed/near-live according to provider plan.')
     provider = EODHDProvider()
-    if not provider.api_key:
-        st.warning('Set EODHD_API_KEY to enable global search and research data. Existing Yahoo quote tracking remains available.')
+    internal_api = configured_market_data_url()
+    if not provider.api_key and not internal_api:
+        st.warning('Set MARKET_DATA_API_URL and MARKET_DATA_API_TOKEN for the normalized provider, or EODHD_API_KEY for development mode.')
     c1, c2, c3 = st.columns([2, 1, 1])
     with c1: query = st.text_input('Search symbol or company', key='query_' + market, placeholder='e.g. Reliance, AAPL, SAP')
     with c2: exchange = st.selectbox('Exchange', ['All'] + list(MARKET_EXCHANGES[market]), key='exchange_' + market)
@@ -34,7 +38,7 @@ def render_research_tab(market: str) -> None:
         st.write('')
         search = st.button('Search', key='search_' + market)
     catalog_exchange = PROVIDER_EXCHANGES[market].get(exchange, exchange)
-    if provider.api_key and exchange != 'All':
+    if (provider.api_key or internal_api) and exchange != 'All':
         if st.button('Load full exchange listing', key='catalog_button_' + market):
             try:
                 catalog = load_exchange_catalog(provider.api_key, catalog_exchange)
@@ -51,10 +55,13 @@ def render_research_tab(market: str) -> None:
                 if value not in st.session_state[watch_key]:
                     st.session_state[watch_key].append(value)
                     st.session_state['selected_' + market] = value
-    if search and query.strip() and provider.api_key:
+    if search and query.strip() and (provider.api_key or internal_api):
         try:
-            st.session_state['results_' + market] = provider.search(query.strip(), market, None if exchange == 'All' else exchange)
-        except ResearchProviderError as err: st.error(str(err))
+            if internal_api:
+                st.session_state['results_' + market] = search_market_instruments(query.strip(), None if exchange == 'All' else exchange)
+            else:
+                st.session_state['results_' + market] = provider.search(query.strip(), market, None if exchange == 'All' else exchange)
+        except (ResearchProviderError, APIClientError) as err: st.error(str(err))
     results = st.session_state.get('results_' + market, [])
     if results:
         labels = {f'{x.symbol} · {x.name} · {x.exchange}': x for x in results[:100]}

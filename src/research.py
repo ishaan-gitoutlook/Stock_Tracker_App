@@ -47,7 +47,7 @@ class Instrument:
 
     @classmethod
     def from_payload(cls, value: Dict[str, Any]) -> "Instrument":
-        exchange = str(_first(value, "Exchange", "exchange", "exchange_name") or "")
+        exchange = str(_first(value, "Exchange", "exchange", "exchange_code", "exchange_name") or "")
         return cls(
             symbol=str(_first(value, "Code", "code", "symbol") or "").upper(),
             name=str(_first(value, "Name", "name", "description") or "Unknown instrument"),

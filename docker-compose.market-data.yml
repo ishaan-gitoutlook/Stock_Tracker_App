@@ -1,0 +1,44 @@
+services:
+  market-data-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: stockpulse
+      POSTGRES_USER: stockpulse
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-stockpulse-dev-only}
+    volumes:
+      - market_data_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stockpulse -d stockpulse"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  market-data-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn src.market_data.api:app --host 0.0.0.0 --port 8001
+    environment:
+      DATABASE_URL: postgresql+psycopg://stockpulse:${POSTGRES_PASSWORD:-stockpulse-dev-only}@market-data-db:5432/stockpulse
+      MARKET_DATA_API_TOKEN: ${MARKET_DATA_API_TOKEN:-local-market-data-token}
+    depends_on:
+      market-data-db:
+        condition: service_healthy
+    ports:
+      - "8001:8001"
+
+  market-data-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python -m src.market_data.worker listings NSE
+    environment:
+      DATABASE_URL: postgresql+psycopg://stockpulse:${POSTGRES_PASSWORD:-stockpulse-dev-only}@market-data-db:5432/stockpulse
+      EODHD_API_KEY: ${EODHD_API_KEY}
+    depends_on:
+      market-data-db:
+        condition: service_healthy
+    profiles: ["worker"]
+
+volumes:
+  market_data_postgres:
