@@ -11,7 +11,7 @@
 [![Architecture](https://img.shields.io/badge/Architecture-2--Tier%20Microservice-orange.svg)]()
 [![License](https://img.shields.io/badge/License-Educational%20Use-lightgrey.svg)]()
 
-A modern, full-stack real-time financial tracking dashboard and REST API built for educational purposes. Demonstrates a decoupled **2-tier microservice architecture** combining **FastAPI** for high-throughput asynchronous financial data ingestion and **Streamlit** for reactive data visualization, complete with automated fallback capabilities, live AI assistant, and interactive terminal CLI support.
+A modern, full-stack financial tracking dashboard and REST API built for educational purposes. The platform combines **FastAPI** for application APIs, a separate normalized **market-data service** for end-of-day ingestion, and **Streamlit** for reactive data visualization, with fallback quotes, an AI assistant, and an interactive terminal CLI.
 
 ---
 
@@ -75,6 +75,40 @@ The application adopts an enterprise microservice pattern with built-in resilien
 ### 🛡️ Smart Dual-Mode Fallback Design
 * **Primary (FastAPI Mode):** When the FastAPI backend is running (locally or on the cloud via `STOCK_API_URL`), Streamlit consumes quotes via structured JSON endpoints.
 * **Secondary (Direct Fallback Mode):** If the backend is temporarily offline or unconfigured (such as during standalone Streamlit Cloud deployment), Streamlit seamlessly switches to direct in-memory fetching without dropping connections or displaying error screens.
+
+---
+
+## 🗄️ Custom Market-Data Service
+
+The repository now includes a separate normalized end-of-day market-data service under `src/market_data/`. It is designed to ingest licensed exchange/vendor data, preserve immutable source payloads, normalize listings and daily prices, and serve the dashboard through a versioned internal API.
+
+Initial exchange scope:
+
+- India: NSE and BSE
+- United States: NYSE and Nasdaq
+- Europe: LSE and Xetra
+
+The development connector uses EODHD. Production deployments should replace it with licensed exchange or authorized vendor connectors before redistributing data. The service stores normalized data in PostgreSQL in production and uses SQLite by default for local development. It currently supports listing synchronization and daily-price ingestion; fundamentals and corporate-action storage endpoints return explicit unavailable states until their ingestion connectors are configured.
+
+### Market-data service commands
+
+```bash
+# Run the private API locally with SQLite
+uvicorn src.market_data.api:app --reload --port 8001
+
+# Seed development exchange listings
+python -m src.market_data.worker listings NSE
+python -m src.market_data.worker listings BSE
+```
+
+For PostgreSQL and the service container stack:
+
+```bash
+docker compose -f docker-compose.market-data.yml up -d market-data-db market-data-api
+docker compose -f docker-compose.market-data.yml --profile worker run --rm market-data-worker
+```
+
+The market-data API is protected with `MARKET_DATA_API_TOKEN` when configured. The Streamlit app can consume it by setting `MARKET_DATA_API_URL` and the same token in its deployment secrets.
 
 ---
 
@@ -153,12 +187,13 @@ Stock_Tracker_App/
 ├── src/                                  # Modular application source code
 │   ├── __init__.py                       # Package initializer
 │   ├── tracker.py                        # Core domain models & parallel data fetcher
-│   ├── universes.py                      # Curated market indices (NIFTY 500, Fortune 500)
+│   ├── universes.py                      # Curated market indices and listing presets
 │   ├── assistant.py                      # Free LLM & heuristic financial assistant engine
 │   ├── api.py                            # FastAPI REST service & route definitions
 │   ├── api_client.py                     # Resilient HTTP client with secret resolution
 │   ├── themes.py                         # Modern design tokens, color palettes & CSS styles
-│   └── dashboard.py                      # Streamlit UI layouts, metrics & AI chat
+│   ├── dashboard.py                      # Streamlit UI layouts, metrics & AI chat
+│   └── market_data/                      # Normalized EOD provider, storage, API & workers
 │
 ├── tests/                                # Automated unit test suite (38 tests)
 │   ├── __init__.py                       # Test package initializer
@@ -171,7 +206,8 @@ Stock_Tracker_App/
 ├── .github/                              # CI/CD automation workflows
 │   └── workflows/ci.yml                  # GitHub Actions test and quality pipeline
 ├── Jenkinsfile                           # Declarative Jenkins CI/CD pipeline
-├── Dockerfile                            # Production container definition
+├── Dockerfile                            # Main application container definition
+├── docker-compose.market-data.yml        # PostgreSQL + market-data API/worker stack
 ├── main.py                               # Application entry point for Streamlit Web Dashboard
 ├── cli.py                                # Application entry point for Terminal CLI Tracker
 ├── requirements.txt                      # Production & development dependencies
@@ -196,6 +232,25 @@ When the FastAPI server is running (`http://127.0.0.1:8000`), the interactive do
 | `GET` | `/api/v1/universes` | Lists all supported market index universes | `N/A` |
 | `GET` | `/api/v1/quotes` | Fetches live market data for requested symbols | `?symbols=AAPL,MSFT&fresh=false` |
 | `POST` | `/api/v1/chat` | AI Assistant answering queries with live market context | `{"message": "Top gainer?", "symbols": ["AAPL"]}` |
+
+### Normalized market-data API
+
+Run the separate service on `http://127.0.0.1:8001` to use these versioned endpoints:
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/v1/health` | Market-data service health |
+| `GET` | `/v1/markets` | Supported market groups |
+| `GET` | `/v1/exchanges` | Core exchange metadata |
+| `GET` | `/v1/instruments/search?q=...` | Search normalized instruments |
+| `GET` | `/v1/exchanges/{exchange}/listings` | Paginated active exchange listings |
+| `GET` | `/v1/instruments/{id}` | Instrument metadata |
+| `GET` | `/v1/instruments/{id}/prices` | Normalized daily OHLCV history |
+| `GET` | `/v1/instruments/{id}/fundamentals` | Fundamental metrics or unavailable status |
+| `GET` | `/v1/instruments/{id}/corporate-actions` | Corporate actions or unavailable status |
+| `GET` | `/v1/ingestion/runs` | Ingestion history and failures |
+
+When `MARKET_DATA_API_TOKEN` is set, send it as the `X-Market-Data-Token` header.
 
 #### Sample Quote Response (`GET /api/v1/quotes?symbols=AAPL`)
 ```json
@@ -265,6 +320,25 @@ Open two separate terminal tabs:
   ```bash
   streamlit run main.py
   ```
+
+#### Mode A2: Normalized Market-Data Service
+
+Run the application API and normalized market-data API separately when testing the custom provider:
+
+```bash
+# Terminal 1: application API
+uvicorn src.api:app --reload --port 8000
+
+# Terminal 2: market-data API
+uvicorn src.market_data.api:app --reload --port 8001
+
+# Terminal 3: Streamlit dashboard
+# PowerShell: $env:MARKET_DATA_API_URL="http://127.0.0.1:8001"
+# PowerShell: $env:MARKET_DATA_API_TOKEN="local-market-data-token"
+streamlit run main.py
+```
+
+The market-data API defaults to SQLite. Set `DATABASE_URL` to a PostgreSQL URL for a deployed instance.
 
 #### Mode B: Standalone Web Dashboard (Direct Yahoo Finance Mode)
 If you do not need the REST API running locally, simply run:
@@ -345,8 +419,18 @@ To deploy this project online so teachers and friends can access it via a public
    ```
 4. Click **Deploy!**
 
+For the normalized provider, add these values under the app's **Settings → Secrets**:
+
+```toml
+MARKET_DATA_API_URL = "https://your-market-data-api.example.com"
+MARKET_DATA_API_TOKEN = "your-internal-service-token"
+EODHD_API_KEY = "your-development-or-licensed-provider-key"
+```
+
+Do not commit secrets or licensed raw market data to GitHub.
+
 ### 3. Standalone Mode (Zero-Config)
-If you do not wish to host a separate Render service, simply deploy directly to Streamlit Community Cloud without configuring any secrets. The built-in fallback will activate automatically, providing 100% functionality out of the box!
+If you deploy only Streamlit without configuring `MARKET_DATA_API_URL` or `EODHD_API_KEY`, the dashboard can still show its small curated Yahoo fallback lists. Complete exchange catalogs and normalized provider data require the market-data service and credentials.
 
 ---
 
@@ -355,6 +439,11 @@ If you do not wish to host a separate Render service, simply deploy directly to 
 | Variable | Default Value | Description |
 | :--- | :--- | :--- |
 | `STOCK_API_URL` | `http://127.0.0.1:8000` | Base endpoint of the FastAPI backend. Can also be defined in Streamlit Cloud Secrets. |
+| `MARKET_DATA_API_URL` | unset | Private normalized market-data API used by the dashboard. |
+| `MARKET_DATA_API_TOKEN` | unset | Shared token for the private market-data API. |
+| `DATABASE_URL` | `sqlite:///./market_data.db` | PostgreSQL URL for production market-data storage; SQLite is the local default. |
+| `EODHD_API_KEY` | unset | Development source credential for EODHD listing/history ingestion. |
+| `MARKET_DATA_RAW_DIR` | `./market_data_raw` | Local raw payload archive directory for development ingestion. |
 | `REFRESH_SECONDS`| `5` | Polling interval for live stock quote refreshes. |
 | `REQUEST_TIMEOUT`| `8` | Network timeout in seconds for upstream financial queries. |
 
