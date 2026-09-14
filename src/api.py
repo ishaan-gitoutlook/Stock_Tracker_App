@@ -3,11 +3,12 @@
 from dataclasses import asdict
 from typing import List, Optional
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel
 
 from src.tracker import DEFAULT_SYMBOLS, get_prices
 from src.universes import MARKET_UNIVERSES
+from src.research import EODHDProvider, ResearchProviderError, market_for_exchange
 
 
 class QuoteResponse(BaseModel):
@@ -56,6 +57,15 @@ class ChatResponse(BaseModel):
     symbols_used: List[str]
 
 
+class InstrumentResponse(BaseModel):
+    symbol: str
+    name: str
+    exchange: str = ""
+    country: str = ""
+    currency: str = ""
+    type: str = "Common Stock"
+
+
 app = FastAPI(
     title="Stock Tracker API",
     version="1.1.0",
@@ -93,6 +103,41 @@ def root() -> dict:
 def list_universes() -> List[UniverseResponse]:
     """List the curated ticker universes available to the dashboard."""
     return [UniverseResponse(name=name, symbols=list(symbols)) for name, symbols in MARKET_UNIVERSES.items()]
+
+
+@app.get("/api/v1/markets")
+def list_markets() -> dict:
+    """Return supported market tabs and their major exchange labels."""
+    from src.research import MARKET_EXCHANGES
+    return {"markets": MARKET_EXCHANGES}
+
+
+@app.get("/api/v1/instruments/search", response_model=List[InstrumentResponse])
+def search_instruments(
+    q: str = Query(min_length=1),
+    market: Optional[str] = None,
+    exchange: Optional[str] = None,
+) -> List[InstrumentResponse]:
+    try:
+        return [InstrumentResponse(**item.__dict__) for item in EODHDProvider().search(q, market, exchange)]
+    except ResearchProviderError as err:
+        raise HTTPException(status_code=503, detail=str(err)) from err
+
+
+@app.get("/api/v1/research/{symbol}/history")
+def research_history(symbol: str, period: str = Query(default="1y")) -> dict:
+    try:
+        return {"symbol": symbol.upper(), "points": [item.__dict__ for item in EODHDProvider().history(symbol, period)]}
+    except ResearchProviderError as err:
+        raise HTTPException(status_code=503, detail=str(err)) from err
+
+
+@app.get("/api/v1/research/{symbol}/fundamentals")
+def research_fundamentals(symbol: str) -> dict:
+    try:
+        return EODHDProvider().fundamentals(symbol).__dict__
+    except ResearchProviderError as err:
+        raise HTTPException(status_code=503, detail=str(err)) from err
 
 
 @app.get("/api/v1/quotes", response_model=QuotesResponse)
