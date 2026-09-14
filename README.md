@@ -157,15 +157,16 @@ Stock_Tracker_App/
 │   ├── assistant.py                      # Free LLM & heuristic financial assistant engine
 │   ├── api.py                            # FastAPI REST service & route definitions
 │   ├── api_client.py                     # Resilient HTTP client with secret resolution
+│   ├── themes.py                         # Modern design tokens, color palettes & CSS styles
 │   └── dashboard.py                      # Streamlit UI layouts, metrics & AI chat
 │
-├── tests/                                # Automated unit test suite (29 tests)
+├── tests/                                # Automated unit test suite (38 tests)
 │   ├── __init__.py                       # Test package initializer
 │   ├── test_tracker.py                   # Data parsing, calculations & fallback tests
 │   ├── test_assistant.py                 # AI prompt generation, provider & heuristic tests
 │   ├── test_chat_api.py                  # FastAPI chat endpoint & client wrapper tests
 │   ├── test_api_client.py                # HTTP client serialization & error handling tests
-│   └── test_dashboard.py                 # Universe indexing & fallback mode tests
+│   └── test_dashboard.py                 # Universe indexing, fallback mode & theme tests
 │
 ├── .github/                              # CI/CD automation workflows
 │   └── workflows/ci.yml                  # GitHub Actions test and quality pipeline

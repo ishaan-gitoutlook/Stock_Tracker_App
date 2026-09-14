@@ -4,6 +4,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 import json
 import logging
+import sys
 import time
 from typing import Dict, Iterable, Optional
 from urllib.error import HTTPError, URLError
@@ -138,9 +139,16 @@ def get_prices(
     return {sym: quotes[sym] for sym in symbols_list if sym in quotes}
 
 
-def stock_tracker(symbols: Iterable[str] = DEFAULT_SYMBOLS) -> None:
+def stock_tracker(symbols: Iterable[str] = DEFAULT_SYMBOLS, iterations: Optional[int] = None) -> None:
     """Run interactive terminal price ticker."""
+    if hasattr(sys.stdout, "reconfigure"):
+        try:
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
     print("Starting Terminal Stock Tracker. Press Ctrl+C to exit...\n")
+    count = 0
     while True:
         quotes = get_prices(symbols)
         # Clear screen ANSI escape codes
@@ -161,6 +169,9 @@ def stock_tracker(symbols: Iterable[str] = DEFAULT_SYMBOLS) -> None:
             print(f"{sym:<8} {q.name[:20]:<22} {price_str:<12} {chg_str:<14}")
 
         print("-" * 65)
+        count += 1
+        if iterations is not None and count >= iterations:
+            break
         time.sleep(REFRESH_SECONDS)
 
 
@@ -169,3 +180,4 @@ if __name__ == "__main__":
         stock_tracker()
     except KeyboardInterrupt:
         print("\nStock tracker stopped.")
+
