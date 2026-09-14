@@ -3,6 +3,19 @@ import json
 import streamlit as st
 from src.research import EODHDProvider, ResearchProviderError, MARKET_EXCHANGES, Instrument
 
+
+PROVIDER_EXCHANGES = {
+    "India": {"NSE": "NSE", "BSE": "BSE"},
+    "United States": {"NYSE": "US", "NASDAQ": "US", "AMEX": "US"},
+    "Europe": {"LSE": "LSE", "XETRA": "XETRA", "EURONEXT": "EU", "SIX": "SIX", "BME": "BME", "NASDAQ NORDIC": "NORDIC"},
+}
+
+
+@st.cache_data(ttl=86400, show_spinner=False)
+def load_exchange_catalog(api_key: str, provider_exchange: str) -> list[Instrument]:
+    """Cache a full active exchange catalog for the current provider key."""
+    return EODHDProvider(api_key=api_key).exchange_symbols(provider_exchange)
+
 def _symbol(item: Instrument) -> str:
     return item.symbol if '.' in item.symbol else (item.symbol + '.' + item.exchange if item.exchange else item.symbol)
 
@@ -20,6 +33,24 @@ def render_research_tab(market: str) -> None:
     with c3:
         st.write('')
         search = st.button('Search', key='search_' + market)
+    catalog_exchange = PROVIDER_EXCHANGES[market].get(exchange, exchange)
+    if provider.api_key and exchange != 'All':
+        if st.button('Load full exchange listing', key='catalog_button_' + market):
+            try:
+                catalog = load_exchange_catalog(provider.api_key, catalog_exchange)
+                st.session_state['catalog_' + market] = catalog
+                st.success(f'Loaded {len(catalog):,} active instruments from {exchange}.')
+            except ResearchProviderError as err:
+                st.error(str(err))
+        catalog = st.session_state.get('catalog_' + market, [])
+        if catalog:
+            catalog_labels = {f'{item.symbol} · {item.name} · {item.exchange}': item for item in catalog}
+            catalog_label = st.selectbox('All active exchange listings', list(catalog_labels), key='catalog_select_' + market)
+            if st.button('Add selected listing', key='catalog_add_' + market):
+                value = _symbol(catalog_labels[catalog_label])
+                if value not in st.session_state[watch_key]:
+                    st.session_state[watch_key].append(value)
+                    st.session_state['selected_' + market] = value
     if search and query.strip() and provider.api_key:
         try:
             st.session_state['results_' + market] = provider.search(query.strip(), market, None if exchange == 'All' else exchange)

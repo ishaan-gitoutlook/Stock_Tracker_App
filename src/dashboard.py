@@ -559,17 +559,25 @@ def render_dashboard_app() -> None:
     # Apply active theme styling dynamically
     render_theme_styles(st.session_state.get("theme_mode", "Midnight Navy"))
 
-    # Top-level workspace navigation tabs
-    tab_live, tab_research = st.tabs([
-        "📈 Live Market Tracker & Listings",
-        "🔬 In-Depth Fundamentals Research",
+    # Top-level market tabs keep the three regions immediately discoverable.
+    tab_india, tab_us, tab_europe, tab_live = st.tabs([
+        "🇮🇳 India (NSE / BSE)",
+        "🇺🇸 United States (NYSE / NASDAQ)",
+        "🇪🇺 Europe",
+        "📈 Live Tracker",
     ])
 
+    with tab_india:
+        from src.research_ui import render_research_tab
+        render_research_tab("India")
+    with tab_us:
+        from src.research_ui import render_research_tab
+        render_research_tab("United States")
+    with tab_europe:
+        from src.research_ui import render_research_tab
+        render_research_tab("Europe")
     with tab_live:
         render_live_market(selected_universe, selected_symbols)
-
-    with tab_research:
-        render_research_dashboard()
 
     # Floating AI Assistant popover
     with st.popover(

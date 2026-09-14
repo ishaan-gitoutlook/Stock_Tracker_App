@@ -95,6 +95,12 @@ class EODHDProvider:
 
     def __init__(self, api_key: Optional[str] = None, timeout: float = 12.0):
         self.api_key = api_key or os.getenv("EODHD_API_KEY")
+        if not self.api_key:
+            try:
+                import streamlit as st
+                self.api_key = st.secrets.get("EODHD_API_KEY")
+            except (ImportError, RuntimeError, FileNotFoundError):
+                pass
         self.timeout = timeout
         self.base_url = os.getenv("EODHD_BASE_URL", "https://eodhd.com/api").rstrip("/")
 
@@ -112,6 +118,11 @@ class EODHDProvider:
 
     def exchanges(self) -> List[Dict[str, Any]]:
         return self._get("exchanges-list/")
+
+    def exchange_symbols(self, exchange: str) -> List[Instrument]:
+        """Load every active instrument available on one provider exchange."""
+        rows = self._get(f"exchange-symbol-list/{quote(exchange)}", fmt="json") or []
+        return [Instrument.from_payload(row) for row in rows if isinstance(row, dict)]
 
     def search(self, query: str, market: Optional[str] = None, exchange: Optional[str] = None) -> List[Instrument]:
         rows = self._get("search/", query=query) or []
