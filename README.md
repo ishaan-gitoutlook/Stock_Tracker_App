@@ -6,7 +6,7 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.37%2B-FF4B4B.svg?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Tests](https://img.shields.io/badge/Tests-33%20Passing-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/Tests-41%20Passing-brightgreen.svg)](tests/)
 [![AI Assistant](https://img.shields.io/badge/AI%20Assistant-Gemini%20%7C%20Ollama%20%7C%20Heuristic-purple.svg)]()
 [![Architecture](https://img.shields.io/badge/Architecture-2--Tier%20Microservice-orange.svg)]()
 [![License](https://img.shields.io/badge/License-Educational%20Use-lightgrey.svg)]()
@@ -115,6 +115,8 @@ The market-data API is protected with `MARKET_DATA_API_TOKEN` when configured. T
 ## ✨ Key Features
 
 ### 📊 Reactive Frontend (Streamlit)
+- **Rebuilt Market Desk UI:** A responsive HTML/CSS presentation layer with a workspace header, active-universe context card, live-feed status pill, polished tabs, responsive layouts, and elevated data surfaces.
+- **Design System:** Theme-aware CSS variables, typography, cards, tables, controls, metric states, hover treatments, and mobile breakpoints are generated from `src/themes.py`.
 - **Live Price Updates:** Real-time stock ticker quotes refreshed every 5 seconds using non-blocking Streamlit fragments (`@st.fragment`).
 - **Interactive Metric Cards:** Displays company name, current market price, and colored price movement deltas ($\Delta$ with absolute value and percentage).
 - **Light & Dark Theme Modes:** Built-in theme selector with high-contrast color systems tailored for day and night viewing.
@@ -124,6 +126,13 @@ The market-data API is protected with `MARKET_DATA_API_TOKEN` when configured. T
 - **Dynamic Ticker Adder:** Search and add any valid global ticker symbol (e.g., `NVDA`, `TSLA`, `RELIANCE.NS`, `BTC-USD`) on the fly with automatic deduplication.
 - **Comprehensive Market Table:** Detailed overview containing daily price range ($Low - High$), 24-hour volume, and net change.
 - **Instant Manual Refresh:** Clear the UI cache on demand with a single click.
+
+The dashboard opens with the **Market Desk** workspace header, then separates the experience into two focused views:
+
+1. **Live market** — listing selection, tracked-stock metric cards, intraday comparison, market overview table, CSV export, and the AI copilot.
+2. **Fundamentals research** — searchable India, United States, and Europe research workspaces with watchlists, history, valuation, profitability, statements, dividends, and company details.
+
+The UI remains fully Streamlit-native: HTML and CSS improve the visual layer while Streamlit widgets continue to provide accessible interaction, state management, and server-side rendering.
 
 ### ⚡ Asynchronous REST API (FastAPI)
 - **Interactive Documentation:** Automated Swagger UI (`/docs`) and ReDoc (`/redoc`) exploring data contracts and schemas.
@@ -191,11 +200,11 @@ Stock_Tracker_App/
 │   ├── assistant.py                      # Free LLM & heuristic financial assistant engine
 │   ├── api.py                            # FastAPI REST service & route definitions
 │   ├── api_client.py                     # Resilient HTTP client with secret resolution
-│   ├── themes.py                         # Modern design tokens, color palettes & CSS styles
-│   ├── dashboard.py                      # Streamlit UI layouts, metrics & AI chat
+│   ├── themes.py                         # Design tokens, color palettes & responsive CSS
+│   ├── dashboard.py                      # Market Desk UI, metrics, listings & AI chat
 │   └── market_data/                      # Normalized EOD provider, storage, API & workers
 │
-├── tests/                                # Automated unit test suite (38 tests)
+├── tests/                                # Automated unit test suite (41 tests)
 │   ├── __init__.py                       # Test package initializer
 │   ├── test_tracker.py                   # Data parsing, calculations & fallback tests
 │   ├── test_assistant.py                 # AI prompt generation, provider & heuristic tests
@@ -364,11 +373,11 @@ To execute all tests:
 python -m unittest discover tests
 ```
 
-Expected output:
+Expected output (the exact duration can vary by machine):
 ```text
-.................................
+.........................................
 ----------------------------------------------------------------------
-Ran 33 tests in 0.687s
+Ran 41 tests in ...s
 
 OK
 ```
@@ -384,7 +393,7 @@ The project includes continuous integration and automated quality pipelines thro
 - **Matrix Testing:** Validates the test suite concurrently across **Python 3.11** and **Python 3.12**.
 - **Pipeline Workflow:**
   1. Dependency installation from `requirements.txt` with pip caching.
-  2. Execution of the complete 15-test unit suite (`python -m unittest discover tests`).
+  2. Execution of the complete 41-test unit suite (`python -m unittest discover tests`).
   3. Integrity smoke test ensuring both FastAPI and Streamlit modules import cleanly.
 
 ### 2. Jenkins Pipeline (`Jenkinsfile`)

@@ -3,6 +3,7 @@
 import io
 import time
 from typing import Dict, List, Optional, Tuple
+from html import escape
 
 import pandas as pd
 import streamlit as st
@@ -561,6 +562,32 @@ def render_theme_styles(theme: str) -> None:
     st.markdown(build_theme_css(theme), unsafe_allow_html=True)
 
 
+def render_workspace_header(active_universe: str, selected_symbols: List[str]) -> None:
+    """Render the application shell header shared by the dashboard views."""
+    universe_label = LISTING_DISPLAY_LABELS.get(active_universe, active_universe)
+    now = time.strftime("%d %b %Y · %H:%M")
+    st.markdown(
+        f"""
+        <div class="app-header">
+            <div class="app-header-copy">
+                <div class="app-breadcrumb"><span class="app-breadcrumb-dot"></span> WORKSPACE / MARKET DESK</div>
+                <div class="app-title-row">
+                    <h1>Market intelligence, without the noise.</h1>
+                    <span class="header-live-pill"><span></span> LIVE FEED</span>
+                </div>
+                <p>Monitor price action, compare global listings, and turn your watchlist into a decision-ready view.</p>
+            </div>
+            <div class="app-header-meta">
+                <div class="header-meta-label">ACTIVE UNIVERSE</div>
+                <div class="header-meta-value">{escape(universe_label)}</div>
+                <div class="header-meta-sub">{len(selected_symbols)} symbols · Updated {now}</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def render_dashboard_app() -> None:
     """Main application runner."""
     st.set_page_config(
@@ -590,6 +617,8 @@ def render_dashboard_app() -> None:
 
     # Apply active theme styling dynamically
     render_theme_styles(st.session_state.get("theme_mode", "Midnight Navy"))
+
+    render_workspace_header(active_universe, selected_symbols)
 
     # Top-level workspace navigation tabs
     tab_live, tab_research = st.tabs([

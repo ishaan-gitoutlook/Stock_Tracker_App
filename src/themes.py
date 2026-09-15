@@ -1025,6 +1025,171 @@ def build_theme_css(theme_input: str) -> str:
         font-weight: 500;
     }}
 
+    /* Workspace command header */
+    .app-header {{
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 2rem;
+        margin: 0.25rem 0 1.35rem;
+        padding: 1.15rem 0 1.3rem;
+        border-bottom: 1px solid var(--ui-card-border);
+    }}
+
+    .app-header-copy {{
+        min-width: 0;
+    }}
+
+    .app-breadcrumb {{
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin-bottom: 0.6rem;
+        color: var(--ui-accent-secondary) !important;
+        font-size: 0.67rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+    }}
+
+    .app-breadcrumb-dot {{
+        width: 0.42rem;
+        height: 0.42rem;
+        border-radius: 999px;
+        background: var(--ui-accent-secondary);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--ui-accent-secondary) 14%, transparent);
+    }}
+
+    .app-title-row {{
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }}
+
+    .app-title-row h1 {{
+        margin: 0 !important;
+        font-size: clamp(1.55rem, 2.3vw, 2.35rem) !important;
+        letter-spacing: -0.055em;
+        line-height: 1.05;
+    }}
+
+    .app-header-copy p {{
+        max-width: 700px;
+        margin: 0.65rem 0 0;
+        color: var(--ui-text-secondary) !important;
+        font-size: 0.92rem;
+    }}
+
+    .header-live-pill {{
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.32rem 0.58rem;
+        border-radius: 999px;
+        background: var(--ui-bullish-bg);
+        color: var(--ui-bullish) !important;
+        font-size: 0.62rem;
+        font-weight: 850;
+        letter-spacing: 0.1em;
+    }}
+
+    .header-live-pill span {{
+        width: 0.38rem;
+        height: 0.38rem;
+        border-radius: 50%;
+        background: var(--ui-bullish);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--ui-bullish) 15%, transparent);
+    }}
+
+    .app-header-meta {{
+        flex: 0 0 auto;
+        min-width: 220px;
+        padding: 0.85rem 1rem;
+        border: 1px solid var(--ui-card-border);
+        border-radius: 0.9rem;
+        background: var(--ui-surface-card);
+        box-shadow: var(--ui-card-shadow);
+    }}
+
+    .header-meta-label {{
+        color: var(--ui-text-muted) !important;
+        font-size: 0.6rem;
+        font-weight: 800;
+        letter-spacing: 0.13em;
+    }}
+
+    .header-meta-value {{
+        overflow: hidden;
+        margin-top: 0.23rem;
+        color: var(--ui-text-primary) !important;
+        font-size: 0.95rem;
+        font-weight: 800;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }}
+
+    .header-meta-sub {{
+        margin-top: 0.25rem;
+        color: var(--ui-text-secondary) !important;
+        font-size: 0.68rem;
+    }}
+
+    /* Streamlit navigation and data surfaces */
+    [data-testid="stTabs"] [role="tablist"] {{
+        gap: 0.35rem;
+        border-bottom: 1px solid var(--ui-card-border);
+    }}
+
+    [data-testid="stTabs"] button[role="tab"] {{
+        min-height: 2.65rem;
+        padding: 0.55rem 0.9rem;
+        border-radius: 0.65rem 0.65rem 0 0;
+        color: var(--ui-text-muted) !important;
+        font-size: 0.83rem;
+        font-weight: 750;
+    }}
+
+    [data-testid="stTabs"] button[role="tab"][aria-selected="true"] {{
+        color: var(--ui-text-primary) !important;
+        background: var(--ui-surface-card);
+        box-shadow: inset 0 -2px 0 var(--ui-accent-primary);
+    }}
+
+    [data-testid="stDataFrame"] {{
+        overflow: hidden;
+        border: 1px solid var(--ui-card-border);
+        border-radius: 0.9rem;
+        box-shadow: var(--ui-card-shadow);
+    }}
+
+    [data-testid="stMetric"] {{
+        min-height: 7.3rem;
+        padding: 1rem !important;
+        border: 1px solid var(--ui-card-border);
+        border-radius: 0.95rem;
+        background: var(--ui-surface-card);
+        box-shadow: var(--ui-card-shadow);
+        transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+    }}
+
+    [data-testid="stMetric"]:hover {{
+        transform: translateY(-2px);
+        border-color: var(--ui-card-hover-border);
+        box-shadow: var(--ui-card-hover-shadow);
+    }}
+
+    [data-testid="stMetricLabel"] p {{
+        color: var(--ui-text-secondary) !important;
+        font-size: 0.72rem !important;
+        font-weight: 700 !important;
+    }}
+
+    [data-testid="stMetricValue"] {{
+        color: var(--ui-text-primary) !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-size: 1.25rem !important;
+    }}
+
     /* Responsive design */
     @media (max-width: 768px) {{
         .hero-panel {{
@@ -1042,6 +1207,14 @@ def build_theme_css(theme_input: str) -> str:
         .block-container {{
             padding-left: 1rem !important;
             padding-right: 1rem !important;
+        }}
+        .app-header {{
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 1rem;
+        }}
+        .app-header-meta {{
+            width: 100%;
         }}
     }}
     </style>
