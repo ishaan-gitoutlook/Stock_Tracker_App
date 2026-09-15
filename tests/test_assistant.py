@@ -1,8 +1,13 @@
 """Unit tests for the AI Financial Assistant and provider integrations."""
 
 import json
+from pathlib import Path
+import sys
 import unittest
 from unittest.mock import MagicMock, patch
+
+# Ensure repository root is on sys.path when executed directly as a script
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.assistant import (
     GeminiProvider,

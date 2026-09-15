@@ -1,8 +1,13 @@
 """Unit tests for the FastAPI chat endpoint and api_client chat integration."""
 
 import json
+from pathlib import Path
+import sys
 import unittest
 from unittest.mock import MagicMock, patch
+
+# Ensure repository root is on sys.path when executed directly as a script
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.api import app
 from src.api_client import APIClientError, send_chat_message

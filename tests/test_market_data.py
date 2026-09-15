@@ -1,7 +1,12 @@
 """Fixture tests for custom market-data identifiers and validation."""
 
 from datetime import date
+from pathlib import Path
+import sys
 import unittest
+
+# Ensure repository root is on sys.path when executed directly as a script
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.market_data.normalization import normalize_daily_price, normalize_instrument, stable_instrument_id
 

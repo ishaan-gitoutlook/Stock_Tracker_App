@@ -1,7 +1,12 @@
 """Tests for the Streamlit-to-FastAPI HTTP client."""
 
+from pathlib import Path
+import sys
 import unittest
 from unittest.mock import MagicMock, patch
+
+# Ensure repository root is on sys.path when executed directly as a script
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.api_client import APIClientError, fetch_quotes
 

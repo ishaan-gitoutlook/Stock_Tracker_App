@@ -1,7 +1,13 @@
 """Unit tests for the stock tracker core logic."""
 
+from pathlib import Path
+import sys
 import unittest
 from unittest.mock import MagicMock, patch
+
+# Ensure repository root is on sys.path when executed directly as a script
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from src.tracker import StockQuote, fetch_single_quote, get_prices
 
 

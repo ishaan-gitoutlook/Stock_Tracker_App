@@ -24,6 +24,7 @@ A modern, full-stack financial tracking dashboard and REST API built for educati
 - [🌐 REST API Reference](#-rest-api-reference)
 - [🚀 Quick Start (Local Setup)](#-quick-start-local-setup)
 - [🧪 Running Automated Tests](#-running-automated-tests)
+- [🔧 Troubleshooting & Common Issues](#-troubleshooting--common-issues)
 - [⚙️ CI/CD Automation (GitHub Actions & Jenkins)](#️-cicd-automation-github-actions--jenkins)
 - [☁️ Cloud Deployment Guide](#️-cloud-deployment-guide)
   - [1. Deploying FastAPI to Render](#1-deploying-fastapi-to-render)
@@ -300,7 +301,11 @@ cd Stock_Tracker_App
 ```bash
 # Windows (PowerShell):
 python -m venv .venv
-.venv\Scripts\activate
+.\.venv\Scripts\Activate.ps1
+
+# Note for Windows: If script execution is restricted in PowerShell, run:
+# Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+# Or run without activation: .\.venv\Scripts\python.exe -m streamlit run main.py
 
 # macOS / Linux:
 python3 -m venv .venv
@@ -373,6 +378,15 @@ To execute all tests:
 python -m unittest discover tests
 ```
 
+To run an individual test file:
+```bash
+# Directly as a script:
+python tests/test_api_client.py
+
+# Or via unittest module:
+python -m unittest tests/test_api_client.py
+```
+
 Expected output (the exact duration can vary by machine):
 ```text
 .........................................
@@ -381,6 +395,42 @@ Ran 41 tests in ...s
 
 OK
 ```
+
+---
+
+## 🔧 Troubleshooting & Common Issues
+
+### 1. `'streamlit' is not recognized as an internal or external command` (or exits with code 1)
+- **Cause:** The virtual environment has not been activated in your current terminal session, or `streamlit` is not on the system PATH.
+- **Solution:** Activate your virtual environment in PowerShell:
+  ```powershell
+  .\.venv\Scripts\Activate.ps1
+  streamlit run main.py
+  ```
+  Or run Streamlit directly via the virtual environment interpreter without needing activation:
+  ```powershell
+  .\.venv\Scripts\python.exe -m streamlit run main.py
+  ```
+
+### 2. `Port 8501 is not available`
+- **Cause:** Another Streamlit process or background service is already listening on default port `8501`.
+- **Solution:** Stop the existing process:
+  ```powershell
+  # Check and stop process using port 8501 (PowerShell)
+  $conn = Get-NetTCPConnection -LocalPort 8501 -ErrorAction SilentlyContinue
+  if ($conn) { Stop-Process -Id $conn.OwningProcess -Force }
+  ```
+  Or launch Streamlit on an alternative port:
+  ```bash
+  streamlit run main.py --server.port 8502
+  ```
+
+### 3. Relocated Virtual Environment (Silent Exit Code 1)
+- **Cause:** If the project directory was moved, renamed, or copied, Windows console executable wrappers in `.venv/Scripts/` (e.g., `streamlit.exe`, `uvicorn.exe`, `pip.exe`) can retain outdated hardcoded interpreter paths, causing them to fail immediately upon invocation.
+- **Solution:** Reinstall the console script wrappers to point to the current environment:
+  ```powershell
+  .\.venv\Scripts\python.exe -m pip install --force-reinstall --no-deps streamlit uvicorn pip
+  ```
 
 ---
 

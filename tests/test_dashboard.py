@@ -1,7 +1,12 @@
 """Tests for dashboard ticker-universe selection behavior."""
 
+from pathlib import Path
+import sys
 import unittest
 from unittest.mock import patch
+
+# Ensure repository root is on sys.path when executed directly as a script
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.api_client import APIClientError
 from src.universes import MARKET_UNIVERSES, get_ticker_options
