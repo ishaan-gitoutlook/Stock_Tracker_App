@@ -396,6 +396,39 @@ Ran 41 tests in ...s
 OK
 ```
 
+### 🎭 End-to-End Browser Testing (Playwright)
+
+Automated visual and interactive end-to-end tests for the Streamlit dashboard:
+
+```bash
+# Run tests headlessly
+npm run test:e2e
+
+# Run tests with visible browser window
+npm run test:e2e:headed
+```
+
+Test specifications are located in `tests/e2e/`:
+* `01-hello-world.spec.ts`: Basic Playwright navigation and assertions.
+* `02-locators.spec.ts`: Core accessibility and locator strategies.
+* `03-stock-dashboard.spec.ts`: Full StockPulse dashboard UI, sidebar, and widget verification.
+* `04-mcp-simulation.spec.ts`: ARIA accessibility tree inspection and tool execution simulation.
+
+---
+
+### 🤖 Autonomous AI QA Test Suite (Playwright + MCP + Ollama)
+
+An autonomous QA testing agent that reads the webpage's live **accessibility tree (ARIA snapshot)** via Model Context Protocol (MCP) tools and executes declarative YAML test scenarios using **Ollama** (`nemotron-3-super:cloud` or local models):
+
+```bash
+# Execute the AI test suite against the running dashboard (http://localhost:8501)
+npm run test:ai
+```
+
+* **Test Scenarios (`tests/ai_agent/test_scenarios.yaml`)**: Declarative plain-English test definitions.
+* **Test Runner (`tests/ai_agent/runner.py`)**: Executes scenarios, drives Chromium with Playwright, and compiles results.
+* **Automated Report (`tests/ai_agent/reports/test_report.md`)**: Complete test execution summary with pass/fail badges, model rationale, and embedded screenshots for visual evidence.
+
 ---
 
 ## 🔧 Troubleshooting & Common Issues

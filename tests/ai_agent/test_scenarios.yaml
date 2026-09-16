@@ -1,0 +1,40 @@
+test_suite: "StockPulse AI QA Automation Suite"
+base_url: "http://localhost:8501"
+model: "nemotron-3-super:cloud"
+
+scenarios:
+  - id: "TC01"
+    name: "Dashboard Health and Default State"
+    priority: "High"
+    instructions: |
+      1. Navigate to http://localhost:8501.
+      2. Take an ARIA snapshot of the page.
+      3. Verify the following:
+         a. Page title or branding contains 'StockPulse' or 'Stock'.
+         b. Active listing displays 'NIFTY 500' by default.
+         c. There are at least 4 tracked stocks listed.
+         d. No error banners or unhandled exceptions appear.
+      4. Conclude with PASS if all 4 checks hold, otherwise FAIL.
+
+  - id: "TC02"
+    name: "Switch Market Listing to S&P 500"
+    priority: "High"
+    instructions: |
+      1. Navigate to http://localhost:8501.
+      2. Take an ARIA snapshot.
+      3. Find and click on the 'S&P 500' option.
+      4. Take a new ARIA snapshot.
+      5. Verify that the page updates to reflect 'S&P 500' or US Fortune 500.
+      6. Conclude with PASS if the universe updated, otherwise FAIL.
+
+  - id: "TC03"
+    name: "Add Custom Stock Symbol"
+    priority: "Medium"
+    instructions: |
+      1. Navigate to http://localhost:8501.
+      2. Take an ARIA snapshot.
+      3. Find the input field for adding a ticker symbol (placeholder: 'e.g. NVDA').
+      4. Type 'NVDA' into that input field.
+      5. Click the 'Add Symbol to Watchlist' button.
+      6. Take a final ARIA snapshot and confirm the app is stable and responsive.
+      7. Conclude with PASS if no crash occurred, otherwise FAIL.
