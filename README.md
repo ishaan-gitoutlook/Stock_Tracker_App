@@ -1,553 +1,354 @@
-# 📈 Stock Tracker App
+# 📈 StockPulse — Enterprise Financial Intelligence & AI QA Platform
 
 [![CI/CD Pipeline](https://github.com/ishaan-gitoutlook/Stock_Tracker_App/actions/workflows/ci.yml/badge.svg)](https://github.com/ishaan-gitoutlook/Stock_Tracker_App/actions/workflows/ci.yml)
 [![CI: Jenkins](https://img.shields.io/badge/CI%2FCD-Jenkins%20Pipeline-D24939.svg?logo=jenkins&logoColor=white)](Jenkinsfile)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?logo=docker&logoColor=white)](Dockerfile)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
+[![Playwright](https://img.shields.io/badge/Playwright-v1.63%2B-45ba4b.svg?logo=playwright&logoColor=white)](https://playwright.dev/)
+[![MCP](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-orange.svg)]()
+[![AI QA Suite](https://img.shields.io/badge/AI%20QA-Nemotron%20%7C%20Ollama-purple.svg)]()
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.37%2B-FF4B4B.svg?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Tests](https://img.shields.io/badge/Tests-41%20Passing-brightgreen.svg)](tests/)
-[![AI Assistant](https://img.shields.io/badge/AI%20Assistant-Gemini%20%7C%20Ollama%20%7C%20Heuristic-purple.svg)]()
-[![Architecture](https://img.shields.io/badge/Architecture-2--Tier%20Microservice-orange.svg)]()
 [![License](https://img.shields.io/badge/License-Educational%20Use-lightgrey.svg)]()
 
-A modern, full-stack financial tracking dashboard and REST API built for educational purposes. The platform combines **FastAPI** for application APIs, a separate normalized **market-data service** for end-of-day ingestion, and **Streamlit** for reactive data visualization, with fallback quotes, an AI assistant, and an interactive terminal CLI.
+**StockPulse** is a modern, production-grade financial tracking ecosystem, market intelligence dashboard, and autonomous QA testing platform. It combines a resilient **FastAPI** backend, a normalized **EOD market-data service**, an interactive **Streamlit** multi-market dashboard, an **AI Copilot** (Gemini / Ollama), and a cutting-edge **Autonomous AI QA Test Suite** powered by **Playwright** and the **Model Context Protocol (MCP)**.
 
 ---
 
 ## 📑 Table of Contents
 
-- [System Architecture](#-system-architecture)
-- [✨ Key Features](#-key-features)
-- [🤖 Free AI Financial Assistant](#-free-ai-financial-assistant)
-- [📁 Project Structure](#-project-structure)
-- [🌐 REST API Reference](#-rest-api-reference)
+- [🏛️ System Architecture](#️-system-architecture)
+- [✨ Key Capabilities](#-key-capabilities)
+  - [1. Multi-Market Watchlists & Universes](#1-multi-market-watchlists--universes)
+  - [2. Dual-Tab Intelligence (Quotes & Fundamentals)](#2-dual-tab-intelligence-quotes--fundamentals)
+  - [3. 7 Ergonomic Theme Palettes](#3-7-ergonomic-theme-palettes)
+  - [4. AI Financial Copilot](#4-ai-financial-copilot)
+- [🤖 3-Tier Testing & QA Suite](#-3-tier-testing--qa-suite)
+  - [Layer 1: Python Unit & Integration Tests](#layer-1-python-unit--integration-tests)
+  - [Layer 2: Playwright End-to-End Tests](#layer-2-playwright-end-to-end-tests)
+  - [Layer 3: Autonomous AI QA Suite (MCP + Ollama)](#layer-3-autonomous-ai-qa-suite-mcp--ollama)
+- [📁 Repository Structure](#-repository-structure)
 - [🚀 Quick Start (Local Setup)](#-quick-start-local-setup)
-- [🧪 Running Automated Tests](#-running-automated-tests)
-- [🔧 Troubleshooting & Common Issues](#-troubleshooting--common-issues)
-- [⚙️ CI/CD Automation (GitHub Actions & Jenkins)](#️-cicd-automation-github-actions--jenkins)
-- [☁️ Cloud Deployment Guide](#️-cloud-deployment-guide)
-  - [1. Deploying FastAPI to Render](#1-deploying-fastapi-to-render)
-  - [2. Deploying Streamlit to Streamlit Cloud](#2-deploying-streamlit-to-streamlit-community-cloud)
-  - [3. Standalone Mode (Zero-Config)](#3-standalone-mode-zero-config)
+- [🐳 Docker & Compose Deployment](#-docker--compose-deployment)
+- [🌐 REST API Reference](#-rest-api-reference)
 - [⚙️ Configuration & Environment Variables](#️-configuration--environment-variables)
+- [🔧 Troubleshooting & FAQ](#-troubleshooting--faq)
 - [📄 Educational Disclaimer](#-educational-disclaimer)
 
 ---
 
 ## 🏛️ System Architecture
 
-The application adopts an enterprise microservice pattern with built-in resilience:
+StockPulse is designed around an enterprise microservices pattern with built-in failover:
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    CLIENT / PRESENTATION                    │
-│                                                             │
-│   Streamlit Web Dashboard            Terminal CLI Tracker   │
-│       (main.py)                           (cli.py)          │
-└──────────────┬──────────────────────────────────┬───────────┘
-               │                                  │
-    HTTP / REST│ (Configured via STOCK_API_URL)   │
-               ▼                                  │
-┌───────────────────────────────┐                 │
-│         API BACKEND           │                 │
-│      FastAPI / Uvicorn        │                 │
-│      (src/api.py)             │                 │
-│  - /api/v1/quotes             │                 │
-│  - /api/v1/universes          │                 │
-│  - /health                    │                 │
-└──────────────┬────────────────┘                 │
-               │                                  │
-               │ (Internal Data Service)          │
-               ▼                                  │
-┌─────────────────────────────────────────────────┴───────────┐
-│                     CORE DATA LAYER                         │
-│                    (src/tracker.py)                         │
-│                                                             │
-│  - Parallel ThreadPoolExecutor                              │
-│  - Strongly-Typed StockQuote Domain Model                   │
-│  - Resilient Fault-Tolerant Symbol Ingestion                │
-└──────────────────────────────┬──────────────────────────────┘
-                               │ HTTPS
-                               ▼
-                 Yahoo Finance Financial API
-```
+┌────────────────────────────────────────────────────────────────────────┐
+│                         CLIENT INTERFACES                              │
+│                                                                        │
+│   Streamlit Web UI (main.py)           Terminal CLI (cli.py)           │
+│   - Multi-Market Radar                 - Live ASCII ticker table       │
+│   - Fundamentals Research              - Instant console quotes        │
+│   - 7 Ergonomic Color Themes                                           │
+└───────────────────┬───────────────────────────────┬────────────────────┘
+                    │                               │
+         HTTP / REST│ (APIClient with Fallback)     │ Direct Fallback
+                    ▼                               ▼
+┌────────────────────────────────────────┐  ┌────────────────────────────┐
+│          CORE FASTAPI BACKEND          │  │       YAHOO FINANCE        │
+│          (src/api.py :8000)            │  │      UPSTREAM / DIRECT     │
+│   - /api/v1/quotes                     │  │      (src/tracker.py)      │
+│   - /api/v1/universes                  │  └─────────────▲──────────────┘
+│   - /api/v1/chat (AI Assistant)        │                │
+│   - /health                            │                │
+└───────────────────┬────────────────────┘                │
+                    │                                     │
+         HTTP / REST│                                     │
+                    ▼                                     │
+┌────────────────────────────────────────┐                │
+│       MARKET DATA SERVICE (EOD)        │                │
+│       (src/market_data/ :8001)         │                │
+│   - Normalized Exchange Storage        │────────────────┘
+│   - PostgreSQL 16 / SQLite             │
+│   - Scheduled Ingestion Workers        │
+└────────────────────────────────────────┘
 
-### 🛡️ Smart Dual-Mode Fallback Design
-* **Primary (FastAPI Mode):** When the FastAPI backend is running (locally or on the cloud via `STOCK_API_URL`), Streamlit consumes quotes via structured JSON endpoints.
-* **Secondary (Direct Fallback Mode):** If the backend is temporarily offline or unconfigured (such as during standalone Streamlit Cloud deployment), Streamlit seamlessly switches to direct in-memory fetching without dropping connections or displaying error screens.
+══════════════════════════════════════════════════════════════════════════
+               AUTONOMOUS AI QA AUTOMATION LAYER
+══════════════════════════════════════════════════════════════════════════
+┌──────────────────────┐      MCP JSON-RPC      ┌────────────────────────┐
+│  OLLAMA AI ENGINE    │◄──────────────────────►│  PLAYWRIGHT MCP SERVER │
+│ (nemotron-3-super)   │   (Tools & ARIA Tree)  │   (@playwright/mcp)    │
+└──────────┬───────────┘                        └───────────┬────────────┘
+           │                                                │
+           │ Evaluates Pass/Fail                            │ Drives Browser
+           ▼                                                ▼
+┌──────────────────────┐                        ┌────────────────────────┐
+│ Markdown Test Report │                        │ Chromium Headed/Headless│
+│  & PNG Evidence      │                        │ (http://localhost:8501)│
+└──────────────────────┘                        └────────────────────────┘
+```
 
 ---
 
-## 🗄️ Custom Market-Data Service
+## ✨ Key Capabilities
 
-The repository now includes a separate normalized end-of-day market-data service under `src/market_data/`. It is designed to ingest licensed exchange/vendor data, preserve immutable source payloads, normalize listings and daily prices, and serve the dashboard through a versioned internal API.
+### 1. Multi-Market Watchlists & Universes
+Track blue-chip indices and global megacaps out of the box:
+* 🇮🇳 **NIFTY 500 & BSE Sensex 30** (National Stock Exchange & Bombay Stock Exchange)
+* 🇺🇸 **S&P 500 / Fortune 500 & NASDAQ 100** (US Large Cap & Tech Leaders)
+* 🇬🇧 **FTSE 100** (London Stock Exchange)
+* 🇩🇪 **DAX 40** (Deutsche Börse XETRA)
+* 🌐 **Global Megacaps** (Apple, Microsoft, Alphabet, Nvidia, Reliance, etc.)
+* ⭐ **Custom User Watchlists** (Input any global ticker symbol)
 
-Initial exchange scope:
+### 2. Dual-Tab Intelligence (Quotes & Fundamentals)
+* **Live Market Tracker & Listings**: Intraday momentum, daily breadth ratios, visual performance charts, and auto-syncing financial quotes.
+* **In-Depth Fundamentals Research**: Valuation ratios, P/E, EPS, market capitalization, balance sheet stability, and exchange mappings.
 
-- India: NSE and BSE
-- United States: NYSE and Nasdaq
-- Europe: LSE and Xetra
+### 3. 7 Ergonomic Theme Palettes
+Customize the dashboard aesthetic instantly with zero page reloads:
+* 🌙 **Midnight Navy** (Ergonomic Dark)
+* ☀️ **Clean Light** (Glare-Free Paper)
+* 🖤 **Obsidian Noir** (OLED High-Contrast)
+* 🌲 **Emerald Wealth** (Calm Forest Green)
+* ❄️ **Arctic Frost** (Nordic Minimalist Mist)
+* 🌇 **Crimson Sunset** (Warm Twilight Ember)
+* 💻 **Solarized Dark** (Developer Classic)
 
-The development connector uses EODHD. Production deployments should replace it with licensed exchange or authorized vendor connectors before redistributing data. The service stores normalized data in PostgreSQL in production and uses SQLite by default for local development. It currently supports listing synchronization and daily-price ingestion; fundamentals and corporate-action storage endpoints return explicit unavailable states until their ingestion connectors are configured.
+### 4. AI Financial Copilot
+* Supports **Google Gemini API** (`gemini-1.5-flash`), local/cloud **Ollama** (`nemotron-3-super:cloud`, `llama3.2`, `qwen2.5`), or built-in **Rule-Based Heuristics**.
+* Financial domain guardrails, question scope validation, and mandatory risk disclaimers.
 
-### Market-data service commands
+---
+
+## 🤖 3-Tier Testing & QA Suite
+
+StockPulse features a complete, multi-layered quality assurance architecture:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│ Level 3: Autonomous AI QA Suite (Playwright + MCP + Ollama)            │
+│          - Natural language YAML scenarios evaluated by AI Agent       │
+│          - Reads accessibility ARIA tree, outputs pass/fail reports    │
+├────────────────────────────────────────────────────────────────────────┤
+│ Level 2: Playwright End-to-End UI Tests (TypeScript/Node.js)           │
+│          - 16 interactive tests verifying UI rendering, selectors,     │
+│            sidebar dynamics, and Streamlit state changes               │
+├────────────────────────────────────────────────────────────────────────┤
+│ Level 1: Python Unit & Integration Tests (Python unittest)             │
+│          - 41 tests verifying calculations, REST APIs, and fallbacks   │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+### Layer 1: Python Unit & Integration Tests
+Runs all 41 test cases across the API client, assistant, chat, and market data modules:
+```bash
+python -m unittest discover tests
+```
+
+### Layer 2: Playwright End-to-End Tests
+Visual and interactive tests running against the real browser:
+```bash
+# Run headlessly in the background
+npm run test:e2e
+
+# Run with visible browser window to watch interactions
+npm run test:e2e:headed
+```
+
+**Test Specifications (`tests/e2e/`):**
+* `01-hello-world.spec.ts`: Page navigation, title verification, and search inputs.
+* `02-locators.spec.ts`: Accessibility-first locators (`getByRole`, `getByPlaceholder`, chaining).
+* `03-stock-dashboard.spec.ts`: Live testing of StockPulse sidebar, presets, branding, and ARIA tree.
+* `04-mcp-simulation.spec.ts`: MCP ARIA snapshot inspection and See→Think→Act loop simulation.
+
+### Layer 3: Autonomous AI QA Suite (MCP + Ollama)
+A fully autonomous AI test runner that reads declarative plain-English test scenarios from YAML, drives Chromium via Playwright, and issues verdicts:
 
 ```bash
-# Run the private API locally with SQLite
-uvicorn src.market_data.api:app --reload --port 8001
+# Start your application first in one terminal:
+streamlit run main.py
 
-# Seed development exchange listings
-python -m src.market_data.worker listings NSE
-python -m src.market_data.worker listings BSE
+# In a second terminal, execute the AI QA suite:
+npm run test:ai
 ```
 
-For PostgreSQL and the service container stack:
-
-```bash
-docker compose -f docker-compose.market-data.yml up -d market-data-db market-data-api
-docker compose -f docker-compose.market-data.yml --profile worker run --rm market-data-worker
-```
-
-The market-data API is protected with `MARKET_DATA_API_TOKEN` when configured. The Streamlit app can consume it by setting `MARKET_DATA_API_URL` and the same token in its deployment secrets.
+* **Test Scenarios (`tests/ai_agent/test_scenarios.yaml`)**: Declarative test definitions.
+* **Test Runner (`tests/ai_agent/runner.py`)**: Connects to `nemotron-3-super:cloud` (or any Ollama/cloud model), uses Playwright MCP tools, captures screenshots, and generates reports.
+* **Automated Report (`tests/ai_agent/reports/test_report.md`)**: Complete summary with pass/fail badges, model rationale, and screenshot evidence (**100% PASS**).
 
 ---
 
-## ✨ Key Features
-
-### 📊 Reactive Frontend (Streamlit)
-- **Rebuilt Market Desk UI:** A responsive HTML/CSS presentation layer with a workspace header, active-universe context card, live-feed status pill, polished tabs, responsive layouts, and elevated data surfaces.
-- **Design System:** Theme-aware CSS variables, typography, cards, tables, controls, metric states, hover treatments, and mobile breakpoints are generated from `src/themes.py`.
-- **Live Price Updates:** Real-time stock ticker quotes refreshed every 5 seconds using non-blocking Streamlit fragments (`@st.fragment`).
-- **Interactive Metric Cards:** Displays company name, current market price, and colored price movement deltas ($\Delta$ with absolute value and percentage).
-- **Light & Dark Theme Modes:** Built-in theme selector with high-contrast color systems tailored for day and night viewing.
-- **Floating AI Assistant Launcher:** Bottom-right floating trigger button (`💬 AI`) with smooth CSS pulse animation for instant drawer-based chat without page clutter.
-- **Hero Status Banner:** Gradient header panel with live ticker counter and real-time connection status dot (`● LIVE`).
-- **Curated Market Universes:** Filter and track major stock collections, including **NIFTY 500**, **Fortune 500**, and personal watchlists.
-- **Dynamic Ticker Adder:** Search and add any valid global ticker symbol (e.g., `NVDA`, `TSLA`, `RELIANCE.NS`, `BTC-USD`) on the fly with automatic deduplication.
-- **Comprehensive Market Table:** Detailed overview containing daily price range ($Low - High$), 24-hour volume, and net change.
-- **Instant Manual Refresh:** Clear the UI cache on demand with a single click.
-
-The dashboard opens with the **Market Desk** workspace header, then separates the experience into two focused views:
-
-1. **Live market** — listing selection, tracked-stock metric cards, intraday comparison, market overview table, CSV export, and the AI copilot.
-2. **Fundamentals research** — searchable India, United States, and Europe research workspaces with watchlists, history, valuation, profitability, statements, dividends, and company details.
-
-The UI remains fully Streamlit-native: HTML and CSS improve the visual layer while Streamlit widgets continue to provide accessible interaction, state management, and server-side rendering.
-
-### ⚡ Asynchronous REST API (FastAPI)
-- **Interactive Documentation:** Automated Swagger UI (`/docs`) and ReDoc (`/redoc`) exploring data contracts and schemas.
-- **High Concurrency:** Utilizes Python's `concurrent.futures.ThreadPoolExecutor` to fetch multiple symbols simultaneously in $<0.8\text{s}$.
-- **Health Checks:** Built-in `/health` probe for automated container and service monitoring.
-
-### 💻 Command-Line Interface (CLI)
-- **Terminal Price Ticker:** Lightweight console view with formatted ASCII tables and auto-clearing screens for terminal enthusiasts.
-
-### 🤖 Free AI Financial Assistant
-- **Dual Cloud & Local Execution:** Seamlessly switches between **Google Gemini Flash (Free Cloud Tier)** and **Ollama (100% Offline Local LLM)**.
-- **Context-Aware Reasoning:** Injects the live prices, deltas, volumes, and daily ranges of currently selected stocks directly into the model's prompt.
-- **Offline Heuristic Fallback:** If no API key or Ollama daemon is running, a built-in financial rule engine answers questions (top gainers, losers, highest volume, price comparisons) with zero external dependencies.
-- **Interactive UI with Quick Prompts:** Single-click prompt chips (`📈 Top Gainer Today?`, `📉 Biggest Decline?`, `📊 Portfolio Summary`) and live chat interface.
-
----
-
-## 🤖 Free AI Financial Assistant
-
-The assistant operates with **zero mandatory setup** through a 3-tier resolution hierarchy:
+## 📁 Repository Structure
 
 ```
-                  User Query
-                      │
-                      ▼
-         [ Live Market Context Injection ]
-                      │
-         ┌────────────┼────────────┐
-         ▼            ▼            ▼
-     [ Gemini ]   [ Ollama ]   [ Heuristic ]
-    (Free Cloud)   (Local)      (Offline)
-```
-
-### Supported Provider Options:
-
-The assistant is restricted to tracked-stock and stock-performance questions. Out-of-scope questions receive `I don't know.` It does not issue buy/sell recommendations, and comparison or investment-related questions include a risk disclaimer. Provider output is capped at 10,000 tokens per query.
-
-1. **Option 1: Google Gemini (Free Cloud Tier — Recommended for Streamlit Cloud)**
-   - Get a free API key from [Google AI Studio](https://aistudio.google.com/) (No credit card needed).
-   - Locally: add `GEMINI_API_KEY="your-key"` to your `.env` or environment.
-   - Streamlit Cloud: add `GEMINI_API_KEY = "your-key"` to your app's **Secrets** settings.
-   - Teachers and friends opening your public link can chat with the assistant 24/7!
-
-2. **Option 2: Local Ollama (100% Offline & Private)**
-   - Install [Ollama](https://ollama.ai) and pull any model (e.g. `llama3.2:3b` or `tinyllama`):
-     ```bash
-     ollama run tinyllama
-     ```
-   - The app automatically detects Ollama running at `http://127.0.0.1:11434` and uses it locally with zero internet.
-
-3. **Option 3: Built-in Heuristic Analyst (Zero-Configuration Fallback)**
-   - If neither a Gemini key nor Ollama is configured, the built-in financial rule engine automatically takes over, answering questions about gainers, losers, price spreads, and volume rankings without any errors.
-
----
-
-## 📁 Project Structure
-
-```text
 Stock_Tracker_App/
-│
-├── src/                                  # Modular application source code
-│   ├── __init__.py                       # Package initializer
-│   ├── tracker.py                        # Core domain models & parallel data fetcher
-│   ├── universes.py                      # Curated market indices and listing presets
-│   ├── assistant.py                      # Free LLM & heuristic financial assistant engine
-│   ├── api.py                            # FastAPI REST service & route definitions
-│   ├── api_client.py                     # Resilient HTTP client with secret resolution
-│   ├── themes.py                         # Design tokens, color palettes & responsive CSS
-│   ├── dashboard.py                      # Market Desk UI, metrics, listings & AI chat
-│   └── market_data/                      # Normalized EOD provider, storage, API & workers
-│
-├── tests/                                # Automated unit test suite (41 tests)
-│   ├── __init__.py                       # Test package initializer
-│   ├── test_tracker.py                   # Data parsing, calculations & fallback tests
-│   ├── test_assistant.py                 # AI prompt generation, provider & heuristic tests
-│   ├── test_chat_api.py                  # FastAPI chat endpoint & client wrapper tests
-│   ├── test_api_client.py                # HTTP client serialization & error handling tests
-│   └── test_dashboard.py                 # Universe indexing, fallback mode & theme tests
-│
-├── .github/                              # CI/CD automation workflows
-│   └── workflows/ci.yml                  # GitHub Actions test and quality pipeline
-├── Jenkinsfile                           # Declarative Jenkins CI/CD pipeline
-├── Dockerfile                            # Main application container definition
-├── docker-compose.market-data.yml        # PostgreSQL + market-data API/worker stack
-├── main.py                               # Application entry point for Streamlit Web Dashboard
-├── cli.py                                # Application entry point for Terminal CLI Tracker
-├── requirements.txt                      # Production & development dependencies
-├── .gitignore                            # Excluded cache, environment, and IDE artifacts
-├── .gitattributes                        # Cross-platform line ending normalization
-└── README.md                             # Comprehensive project documentation
-```
-
----
-
-## 🌐 REST API Reference
-
-When the FastAPI server is running (`http://127.0.0.1:8000`), the interactive documentation is available at:
-- **Swagger UI:** `http://127.0.0.1:8000/docs`
-- **ReDoc:** `http://127.0.0.1:8000/redoc`
-
-### Endpoints Overview
-
-| Method | Endpoint | Description | Sample Query / Params |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/health` | System health check and status verification | `N/A` |
-| `GET` | `/api/v1/universes` | Lists all supported market index universes | `N/A` |
-| `GET` | `/api/v1/quotes` | Fetches live market data for requested symbols | `?symbols=AAPL,MSFT&fresh=false` |
-| `POST` | `/api/v1/chat` | AI Assistant answering queries with live market context | `{"message": "Top gainer?", "symbols": ["AAPL"]}` |
-
-### Normalized market-data API
-
-Run the separate service on `http://127.0.0.1:8001` to use these versioned endpoints:
-
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `GET` | `/v1/health` | Market-data service health |
-| `GET` | `/v1/markets` | Supported market groups |
-| `GET` | `/v1/exchanges` | Core exchange metadata |
-| `GET` | `/v1/instruments/search?q=...` | Search normalized instruments |
-| `GET` | `/v1/exchanges/{exchange}/listings` | Paginated active exchange listings |
-| `GET` | `/v1/instruments/{id}` | Instrument metadata |
-| `GET` | `/v1/instruments/{id}/prices` | Normalized daily OHLCV history |
-| `GET` | `/v1/instruments/{id}/fundamentals` | Fundamental metrics or unavailable status |
-| `GET` | `/v1/instruments/{id}/corporate-actions` | Corporate actions or unavailable status |
-| `GET` | `/v1/ingestion/runs` | Ingestion history and failures |
-
-When `MARKET_DATA_API_TOKEN` is set, send it as the `X-Market-Data-Token` header.
-
-#### Sample Quote Response (`GET /api/v1/quotes?symbols=AAPL`)
-```json
-{
-  "count": 1,
-  "quotes": [
-    {
-      "symbol": "AAPL",
-      "name": "Apple Inc.",
-      "price": 242.50,
-      "currency": "USD",
-      "previous_close": 239.80,
-      "change": 2.70,
-      "change_percent": 1.13,
-      "day_high": 243.20,
-      "day_low": 238.90,
-      "volume": 48920100
-    }
-  ]
-}
+├── src/                               # Application source code
+│   ├── api.py                         # FastAPI REST application
+│   ├── api_client.py                  # API client with automatic offline fallback
+│   ├── assistant.py                   # AI Financial Copilot (Gemini/Ollama/Heuristics)
+│   ├── dashboard.py                   # Streamlit web dashboard
+│   ├── research.py                    # Fundamentals research data adapter
+│   ├── research_ui.py                 # Fundamentals UI tab renderer
+│   ├── themes.py                      # 7 ergonomic UI color palettes
+│   ├── tracker.py                     # Stock quote fetching & caching engine
+│   ├── universes.py                   # Global market listings & index constituents
+│   └── market_data/                   # Normalized EOD market-data microservice
+│       ├── api.py                     # Market-data FastAPI service
+│       ├── ingest.py                  # Exchange catalog ingestion pipeline
+│       ├── models.py                  # SQLAlchemy domain entities
+│       ├── normalization.py           # Symbology and price normalization
+│       ├── storage.py                 # PostgreSQL & SQLite repository layer
+│       └── worker.py                  # CLI catalog worker
+├── tests/                             # Comprehensive test suites
+│   ├── test_api_client.py             # Client unit tests
+│   ├── test_assistant.py              # AI assistant guardrail tests
+│   ├── test_chat_api.py               # Chat endpoint tests
+│   ├── test_dashboard.py              # Streamlit state tests
+│   ├── test_market_data.py            # Ingestion & storage tests
+│   ├── test_tracker.py                # Quote calculation tests
+│   ├── e2e/                           # Layer 2: Playwright E2E tests
+│   │   ├── 01-hello-world.spec.ts     # Basic navigation & assertions
+│   │   ├── 02-locators.spec.ts        # Role-based locator tests
+│   │   ├── 03-stock-dashboard.spec.ts # Streamlit dashboard test suite (7/7 passed)
+│   │   ├── 04-mcp-simulation.spec.ts  # MCP ARIA simulation (3/3 passed)
+│   │   └── screenshots/               # Baseline visual snapshots
+│   └── ai_agent/                      # Layer 3: Autonomous AI QA suite
+│       ├── agent.py                   # Interactive AI browser agent
+│       ├── runner.py                  # YAML-driven test runner
+│       ├── test_scenarios.yaml        # Natural language test cases
+│       └── reports/                   # Generated reports & PNG evidence
+│           ├── test_report.md         # 100% Pass Execution Report
+│           └── screenshot_*.png       # Visual test evidence
+├── .github/workflows/ci.yml           # GitHub Actions automated CI workflow
+├── .vscode/mcp.json                   # Playwright MCP server registration
+├── playwright.config.ts               # Playwright test configuration
+├── package.json                       # Node.js test scripts & dependencies
+├── Dockerfile                         # Production multi-stage Docker build
+├── docker-compose.market-data.yml     # PostgreSQL + Market-Data compose stack
+├── Jenkinsfile                        # Declarative Jenkins CI/CD pipeline
+├── main.py                            # Streamlit application entrypoint
+├── cli.py                             # Interactive terminal CLI tracker
+├── requirements.txt                   # Python dependencies
+└── WALKTHROUGH.md                     # Complete project walkthrough guide
 ```
 
 ---
 
 ## 🚀 Quick Start (Local Setup)
 
-### 1. Prerequisites
-- **Python 3.10+** installed on your system.
-- Git installed on your system.
+### 1. Clone & Setup Python Environment
 
-### 2. Clone the Repository
-```bash
+```powershell
+# Clone repository
 git clone https://github.com/ishaan-gitoutlook/Stock_Tracker_App.git
 cd Stock_Tracker_App
-```
 
-### 3. Create & Activate Virtual Environment
-```bash
-# Windows (PowerShell):
+# Create virtual environment
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 
-# Note for Windows: If script execution is restricted in PowerShell, run:
-# Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-# Or run without activation: .\.venv\Scripts\python.exe -m streamlit run main.py
-
-# macOS / Linux:
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-### 4. Install Dependencies
-```bash
+# Install Python dependencies
 pip install -r requirements.txt
 ```
 
----
+### 2. Install Playwright & Node.js Dependencies
 
-### 5. Running the Application
+```powershell
+# Install npm dependencies
+npm install
 
-You can run the project in three different ways:
+# Install Playwright browser binaries
+npx playwright install chromium
+```
 
-#### Mode A: Full Microservices Stack (FastAPI + Streamlit)
-Open two separate terminal tabs:
+### 3. Run the Application
 
-* **Terminal 1 (Backend API):**
-  ```bash
-  uvicorn src.api:app --reload --port 8000
-  ```
-* **Terminal 2 (Frontend Dashboard):**
-  ```bash
-  streamlit run main.py
-  ```
+You can launch StockPulse in three distinct modes:
 
-#### Mode A2: Normalized Market-Data Service
+#### Option A: Standalone Dashboard (Easiest)
+```powershell
+streamlit run main.py
+```
+*Opens automatically at `http://localhost:8501`. Automatically falls back to direct financial fetching with zero external services required.*
 
-Run the application API and normalized market-data API separately when testing the custom provider:
-
-```bash
-# Terminal 1: application API
+#### Option B: Full Microservices Stack
+```powershell
+# Terminal 1: Core API Backend
 uvicorn src.api:app --reload --port 8000
 
-# Terminal 2: market-data API
-uvicorn src.market_data.api:app --reload --port 8001
-
-# Terminal 3: Streamlit dashboard
-# PowerShell: $env:MARKET_DATA_API_URL="http://127.0.0.1:8001"
-# PowerShell: $env:MARKET_DATA_API_TOKEN="local-market-data-token"
+# Terminal 2: Streamlit Frontend
 streamlit run main.py
 ```
 
-The market-data API defaults to SQLite. Set `DATABASE_URL` to a PostgreSQL URL for a deployed instance.
-
-#### Mode B: Standalone Web Dashboard (Direct Yahoo Finance Mode)
-If you do not need the REST API running locally, simply run:
-```bash
-streamlit run main.py
-```
-*(The dashboard will automatically detect that the API is offline and safely fetch data directly).*
-
-#### Mode C: Terminal CLI Tracker
-To view live ASCII market quotes directly in your terminal console:
-```bash
+#### Option C: Terminal CLI Tracker
+```powershell
 python cli.py
 ```
 
 ---
 
-## 🧪 Running Automated Tests
+## 🐳 Docker & Compose Deployment
 
-The repository includes a comprehensive unit testing suite using Python's built-in `unittest` framework, validating domain logic, calculations, API serialization, and fallback mechanisms with zero external test runners required.
-
-To execute all tests:
-```bash
-python -m unittest discover tests
-```
-
-To run an individual test file:
-```bash
-# Directly as a script:
-python tests/test_api_client.py
-
-# Or via unittest module:
-python -m unittest tests/test_api_client.py
-```
-
-Expected output (the exact duration can vary by machine):
-```text
-.........................................
-----------------------------------------------------------------------
-Ran 41 tests in ...s
-
-OK
-```
-
-### 🎭 End-to-End Browser Testing (Playwright)
-
-Automated visual and interactive end-to-end tests for the Streamlit dashboard:
+Run the complete isolated stack with PostgreSQL:
 
 ```bash
-# Run tests headlessly
-npm run test:e2e
+# Build and run the Market-Data Service + PostgreSQL 16
+docker compose -f docker-compose.market-data.yml up -d
 
-# Run tests with visible browser window
-npm run test:e2e:headed
+# Build and run the Web Dashboard
+docker build -t stockpulse .
+docker run -p 8501:8501 stockpulse
 ```
-
-Test specifications are located in `tests/e2e/`:
-* `01-hello-world.spec.ts`: Basic Playwright navigation and assertions.
-* `02-locators.spec.ts`: Core accessibility and locator strategies.
-* `03-stock-dashboard.spec.ts`: Full StockPulse dashboard UI, sidebar, and widget verification.
-* `04-mcp-simulation.spec.ts`: ARIA accessibility tree inspection and tool execution simulation.
 
 ---
 
-### 🤖 Autonomous AI QA Test Suite (Playwright + MCP + Ollama)
+## 🌐 REST API Reference
 
-An autonomous QA testing agent that reads the webpage's live **accessibility tree (ARIA snapshot)** via Model Context Protocol (MCP) tools and executes declarative YAML test scenarios using **Ollama** (`nemotron-3-super:cloud` or local models):
-
-```bash
-# Execute the AI test suite against the running dashboard (http://localhost:8501)
-npm run test:ai
-```
-
-* **Test Scenarios (`tests/ai_agent/test_scenarios.yaml`)**: Declarative plain-English test definitions.
-* **Test Runner (`tests/ai_agent/runner.py`)**: Executes scenarios, drives Chromium with Playwright, and compiles results.
-* **Automated Report (`tests/ai_agent/reports/test_report.md`)**: Complete test execution summary with pass/fail badges, model rationale, and embedded screenshots for visual evidence.
-
----
-
-## 🔧 Troubleshooting & Common Issues
-
-### 1. `'streamlit' is not recognized as an internal or external command` (or exits with code 1)
-- **Cause:** The virtual environment has not been activated in your current terminal session, or `streamlit` is not on the system PATH.
-- **Solution:** Activate your virtual environment in PowerShell:
-  ```powershell
-  .\.venv\Scripts\Activate.ps1
-  streamlit run main.py
-  ```
-  Or run Streamlit directly via the virtual environment interpreter without needing activation:
-  ```powershell
-  .\.venv\Scripts\python.exe -m streamlit run main.py
-  ```
-
-### 2. `Port 8501 is not available`
-- **Cause:** Another Streamlit process or background service is already listening on default port `8501`.
-- **Solution:** Stop the existing process:
-  ```powershell
-  # Check and stop process using port 8501 (PowerShell)
-  $conn = Get-NetTCPConnection -LocalPort 8501 -ErrorAction SilentlyContinue
-  if ($conn) { Stop-Process -Id $conn.OwningProcess -Force }
-  ```
-  Or launch Streamlit on an alternative port:
-  ```bash
-  streamlit run main.py --server.port 8502
-  ```
-
-### 3. Relocated Virtual Environment (Silent Exit Code 1)
-- **Cause:** If the project directory was moved, renamed, or copied, Windows console executable wrappers in `.venv/Scripts/` (e.g., `streamlit.exe`, `uvicorn.exe`, `pip.exe`) can retain outdated hardcoded interpreter paths, causing them to fail immediately upon invocation.
-- **Solution:** Reinstall the console script wrappers to point to the current environment:
-  ```powershell
-  .\.venv\Scripts\python.exe -m pip install --force-reinstall --no-deps streamlit uvicorn pip
-  ```
-
----
-
-## ⚙️ CI/CD Automation (GitHub Actions & Jenkins)
-
-The project includes continuous integration and automated quality pipelines through two enterprise-grade CI/CD setups:
-
-### 1. GitHub Actions (`.github/workflows/ci.yml`)
-- **Automated Trigger:** Executes automatically on every `git push` or `pull_request` to the `master` branch.
-- **Matrix Testing:** Validates the test suite concurrently across **Python 3.11** and **Python 3.12**.
-- **Pipeline Workflow:**
-  1. Dependency installation from `requirements.txt` with pip caching.
-  2. Execution of the complete 41-test unit suite (`python -m unittest discover tests`).
-  3. Integrity smoke test ensuring both FastAPI and Streamlit modules import cleanly.
-
-### 2. Jenkins Pipeline (`Jenkinsfile`)
-For teams utilizing Jenkins automation servers:
-- **Declarative Pipeline:** Contains isolated stages for `Checkout`, `Setup Environment`, `Unit Tests`, `Smoke Test`, and `Deploy Notification`.
-- **Clean Workspace:** Automatically generates and tears down a disposable virtual environment (`.venv-ci`) for each run.
-- **Docker Support (`Dockerfile`):** Ready to be built and executed inside containerized Jenkins agents or Kubernetes pods.
-
----
-
-## ☁️ Cloud Deployment Guide
-
-To deploy this project online so teachers and friends can access it via a public URL, use the following free setup:
-
-### 1. Deploying FastAPI to Render
-1. Sign up / log in to [render.com](https://render.com) with GitHub.
-2. Click **New +** ➜ **Web Service** ➜ Select `Stock_Tracker_App`.
-3. Configure the service:
-   - **Name:** `stock-tracker-api`
-   - **Build Command:** `pip install -r requirements.txt`
-   - **Start Command:** `uvicorn src.api:app --host 0.0.0.0 --port $PORT`
-   - **Plan:** Free
-4. Click **Deploy Web Service**.
-5. Once deployed, note down your live URL (e.g. `https://stock-tracker-api.onrender.com`).
-
-### 2. Deploying Streamlit to Streamlit Community Cloud
-1. Sign in to [share.streamlit.io](https://share.streamlit.io) with GitHub.
-2. Click **Create app** ➜ select repository `ishaan-gitoutlook/Stock_Tracker_App` with branch `master` and file `main.py`.
-3. Under **Advanced Settings** ➜ **Secrets**, provide your Render API URL:
-   ```toml
-   STOCK_API_URL = "https://your-api-name.onrender.com"
-   ```
-4. Click **Deploy!**
-
-For the normalized provider, add these values under the app's **Settings → Secrets**:
-
-```toml
-MARKET_DATA_API_URL = "https://your-market-data-api.example.com"
-MARKET_DATA_API_TOKEN = "your-internal-service-token"
-EODHD_API_KEY = "your-development-or-licensed-provider-key"
-```
-
-Do not commit secrets or licensed raw market data to GitHub.
-
-### 3. Standalone Mode (Zero-Config)
-If you deploy only Streamlit without configuring `MARKET_DATA_API_URL` or `EODHD_API_KEY`, the dashboard can still show its small curated Yahoo fallback lists. Complete exchange catalogs and normalized provider data require the market-data service and credentials.
+| Method | Endpoint | Description |
+|:---|:---|:---|
+| `GET` | `/health` | Service health status and uptime |
+| `GET` | `/api/v1/quotes?symbols=AAPL,MSFT` | Fetch real-time quotes, price changes, and breadth |
+| `GET` | `/api/v1/universes` | List all available market listings (NIFTY, S&P, NASDAQ, etc.) |
+| `POST` | `/api/v1/chat` | Query the AI financial copilot with tracked market context |
 
 ---
 
 ## ⚙️ Configuration & Environment Variables
 
-| Variable | Default Value | Description |
-| :--- | :--- | :--- |
-| `STOCK_API_URL` | `http://127.0.0.1:8000` | Base endpoint of the FastAPI backend. Can also be defined in Streamlit Cloud Secrets. |
-| `MARKET_DATA_API_URL` | unset | Private normalized market-data API used by the dashboard. |
-| `MARKET_DATA_API_TOKEN` | unset | Shared token for the private market-data API. |
-| `DATABASE_URL` | `sqlite:///./market_data.db` | PostgreSQL URL for production market-data storage; SQLite is the local default. |
-| `EODHD_API_KEY` | unset | Development source credential for EODHD listing/history ingestion. |
-| `MARKET_DATA_RAW_DIR` | `./market_data_raw` | Local raw payload archive directory for development ingestion. |
-| `REFRESH_SECONDS`| `5` | Polling interval for live stock quote refreshes. |
-| `REQUEST_TIMEOUT`| `8` | Network timeout in seconds for upstream financial queries. |
+| Variable | Default | Purpose |
+|:---|:---|:---|
+| `STOCK_API_URL` | `http://127.0.0.1:8000` | URL for the core FastAPI backend |
+| `MARKET_DATA_API_URL` | `http://127.0.0.1:8001` | URL for the normalized market data service |
+| `MARKET_DATA_API_TOKEN` | `local-market-data-token` | Authorization token for market data endpoints |
+| `DATABASE_URL` | `sqlite:///./market_data.db` | Storage backend (supports SQLite & PostgreSQL) |
+| `GEMINI_API_KEY` | *(None)* | Google AI Studio key for cloud Gemini Copilot |
+| `OLLAMA_BASE_URL` | `http://127.0.0.1:11434` | Endpoint for local or cloud Ollama instance |
+| `OLLAMA_MODEL` | `nemotron-3-super:cloud` | Default model for autonomous QA testing |
+
+---
+
+## 🔧 Troubleshooting & FAQ
+
+### 1. `Port 8501 is already in use`
+A previous Streamlit process is still listening. Kill it via PowerShell:
+```powershell
+$conn = Get-NetTCPConnection -LocalPort 8501 -ErrorAction SilentlyContinue
+if ($conn) { Stop-Process -Id $conn.OwningProcess -Force }
+```
+
+### 2. `Playwright certificate error on download`
+If running on a protected network:
+```powershell
+$env:NODE_TLS_REJECT_UNAUTHORIZED="0"
+npx playwright install chromium
+```
+
+### 3. `How to run tests without Ollama?`
+You can always run the Playwright E2E suite (`npm run test:e2e`) and Python unit tests (`python -m unittest discover tests`), which require no LLM at all.
 
 ---
 
 ## 📄 Educational Disclaimer
 
-This project was developed strictly for **educational and demonstration purposes**. Market data is fetched from publicly available endpoints. It is not intended for live automated trading or investment advisory services.
-
----
-
-## 👨‍💻 Author & Repository
-
-- **Repository:** [https://github.com/ishaan-gitoutlook/Stock_Tracker_App](https://github.com/ishaan-gitoutlook/Stock_Tracker_App)
-- **Developed by:** Ishaan
+*StockPulse is developed exclusively for educational and demonstration purposes. Financial market data is subject to exchange delays. The built-in AI Copilot does not constitute registered financial, investment, or legal advice. Always conduct your own research before trading.*
